@@ -47,8 +47,8 @@ resource "azurerm_network_security_group" "security_group" {
  }
 
  security_rule {
-  name                        = "allow_ssh_in"
-  priority                    = 1001  # Priorité de la règle
+  name                        = "allow_http_in"
+  priority                    = 1002  # Priorité de la règle
   direction                   = "Inbound" # Sens du flux  (Inbound / Outbound)
   access                      = "Allow" # Autorisation (Allow / Deny)
   protocol                    = "Tcp" # Protocole (Tcp / Udp / *)
@@ -63,7 +63,7 @@ resource "azurerm_network_security_group" "security_group" {
 ## Network Security Rule
  security_rule {
   name                        = "allow_ssh_out"
-  priority                    = 1002
+  priority                    = 1003
   direction                   = "Outbound"
   access                      = "Allow"
   protocol                    = "*"
