@@ -1,0 +1,10 @@
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/SUBSCRIPTION_ID"
+
+
+provider "azurerm" {
+subscription_id = "SUBSCRIPTION_ID"
+client_id = "***********" # AppId
+client_secret = "*************" # password
+tenant_id = "***************" # tenant
+features {}
+}

@@ -1,0 +1,48 @@
+---
+- name: Installer Python et corriger libdnf5 sur Fedora
+  hosts: 192.168.10.12
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+
+    - name: Vérifier la version de Fedora
+      command: cat /etc/fedora-release
+      register: fedora_version
+      changed_when: false
+      when: ansible_os_family == "RedHat"
+
+    - name: Installer Python 3 sur Fedora
+      dnf:
+        name: python3
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Vérifier si python3-libdnf5 est installé
+      shell: rpm -q python3-libdnf5 || echo "not installed"
+      register: libdnf5_check
+      changed_when: false
+      when: ansible_os_family == "RedHat"
+
+    - name: Supprimer les anciennes versions de libdnf5 (si présentes)
+      command: dnf remove -y python3-libdnf5
+      when: libdnf5_check.stdout == "not installed"
+      ignore_errors: yes
+
+    - name: Nettoyer le cache de DNF
+      command: dnf clean all
+      when: ansible_os_family == "RedHat"
+
+    - name: Forcer l’installation de libdnf5 avec dnf5
+      command: dnf5 install -y python3-libdnf5
+      when: ansible_os_family == "RedHat"
+
+    - name: Vérifier que libdnf5 fonctionne
+      command: python3 -c "import dnf"
+      register: dnf_test
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Debug - Afficher le résultat du test dnf
+      debug:
+        msg: "{{ dnf_test.stdout }}"

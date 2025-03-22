@@ -1,0 +1,129 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+  ####  Mise à jour distro et paquets pour les 2 types de srv ####
+
+  - name: install updates for fedora
+    tags: always
+    ansible.builtin.dnf:
+      update_only:  yes
+      update_cache: yes
+    when: ansible_distribution == "Fedora"
+
+  - name: install updates for ubuntu
+    tags: always
+    ansible.builtin.apt:
+      upgrade:  dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: create user
+    tags: always
+    ansible.builtin.user:
+      name: simone
+      groups: root
+
+  - name: add sudoers file for simone
+    tags: always
+    ansible.builtin.copy:
+      src: sudoer_simone
+      dest: /etc/sudoers.d/simone
+      owner:  root
+      group:  root
+      mode: 0440 
+  
+    
+    
+        ####   Ubuntu ####
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: install apache on web servers
+    tags: web,apache
+    ansible.builtin.apt:
+      name:
+        - apache2
+        - libapache2-mod-php
+      state:  latest
+    when: ansible_distribution == "Ubuntu"
+
+  - name: copy html file for site
+    tags: apache,web,ubuntu
+    ansible.builtin.copy:
+      src:  default_site.html
+      dest: /var/www/html/index.html
+      owner:  root  
+      group:  root
+      mode: 0644
+
+
+  ####  Ubuntu activer le service Web  ####
+
+  - name: activate apache on web servers
+    tags: web,apache
+    ansible.builtin.service:
+      name:  apache2
+      state:  started
+    when: ansible_distribution == "Ubuntu"
+
+
+  #### Fedora ####
+
+  - name: install httpd on web servers
+    tags: web
+    ansible.builtin.dnf:
+      name:
+        - httpd
+        - php
+      state:  latest
+    when: ansible_distribution == "Fedora"
+
+
+  ####  Fedora Activer le service Web  ####
+
+  - name: activate httpd on web servers
+    tags: web                             ## les tags servent quand on va jouer les playbook ( --tags web )
+    ansible.builtin.service:
+      name: httpd
+      state:  started
+    when: ansible_distribution == "Fedora"
+
+
+
+
+  - name: change admin rights for Admin   ## tache pour changer les droits d'Admin
+    tags: web
+    ansible.builtin.lineinfile:           ## ligne à chercher dans une fichier
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'              ## chercher la ligne contenant "ServerAdmin"
+      line: ServerAdmin somebody@somewhere.net
+    when: ansible_distribution ==   "Fedora"
+    register: httpd_state                 ## Pour enregistrer l'état du service httpd
+
+
+
+  ####  redémarrer le service à chaque fois que l'état dans le register change
+
+  - name: restart httpd
+    tags: web
+    ansible.builtin.service:
+      name: httpd
+      state:  restarted
+    when: httpd_state.changed
+
+
+
+- hosts: db_servers
+  become: true
+  tasks:
+    - name: install mariadb package on db servers
+      tags: db,fedora
+      ansible.builtin.dnf:
+        name: mariadb
+        state: latest
+      when: ansible_distribution == "Fedora"
+                                                                           

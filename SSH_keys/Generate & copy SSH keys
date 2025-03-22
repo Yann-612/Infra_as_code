@@ -1,0 +1,31 @@
+
+#### UBUNTU Lts 22.04 - Générer et rajouter la clé privée ####
+
+###  Générer la paire de clé
+
+ssh-keygen -t rsa -b 2048  
+
+
+
+### copier la clé sur le server 
+
+ssh-copy-id -i ~/.ssh/[clé_privée] [@ip cible]  ##### example: ssh-copy-id -i ~/.ssh/[nom de la clé privée] 10.1.0.5
+
+
+
+###  Charger l'agent SSH dans la mémoire
+
+eval $(ssh-agent)
+
+
+ 
+### rajouter la clé privée sur le client cible 
+
+ssh-add ~/.ssh/[ la clé privée]   ###  example : ssh-add [chemin de la clé privée]
+### resultat = identity added .....
+
+
+ansible all --key-file ~/.ssh//ansible -i /projet_ansible/inventory -m ping  #### a etre renseigner dans le fichier ansible.cfg
+
+
+

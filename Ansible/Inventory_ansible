@@ -1,0 +1,38 @@
+##  @info - https://learn.microsoft.com/fr-fr/azure/virtual-machines/linux/quick-create-terraform?tabs=azure-cli
+
+
+ansible all --key-file ~/.ssh//ansible -i /projet_ansible/inventory -m ping
+
+### Creation du fichier de configuration "ansible.cfg"
+## valeur:
+[defaults]
+inventory = inventory  ## fait réference au fichier "inventory"
+private_key_file = ~/.ss h/[nom_clé_privée]  ## chemin de la clée privée 
+
+###  Sortir du fichier "ansible .cfg"  #### 
+
+ansible all -m ping  ## pour confirmer que les serveurs à contacter répond bien
+
+### Pour lister les hostes ###
+ansible all --list-hosts
+
+### Pour récupérer (PULL) les informations (FACTS)  
+ansible all -m gather_facts
+
+## OU ##
+
+## pour cibler un serveur spécifique ## 
+ansible all -m gather_facts --limit [@ip serveur:client]  ## ansible all -m gather_facts --limit 192.168.10.11
+
+## passer commande des commandes en elevant les droits (sudo) 
+#example: 
+ansible all -m apt -a update_cache=true --become --ask-become-pass
+ansible all -m apt -a name=vim-nox --become --ask-become-pass ## pour télécharger le package "vim-nox"
+ansible all -m apt -a "name=vim-nox state=latest" --become --ask-become-pass ## pour télécharger la derniere version du package "vim-nox"
+ansible all -m apt -a upgrade=dist --become --ask-become-pass ## pour télécharger les miss à jour de la distribution existante
+
+
+
+
+
+
