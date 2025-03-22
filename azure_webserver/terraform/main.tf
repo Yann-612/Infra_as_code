@@ -46,6 +46,20 @@ resource "azurerm_network_security_group" "security_group" {
   destination_address_prefix  = "*" # Adresse IP destination
  }
 
+ security_rule {
+  name                        = "allow_ssh_in"
+  priority                    = 1001  # Priorité de la règle
+  direction                   = "Inbound" # Sens du flux  (Inbound / Outbound)
+  access                      = "Allow" # Autorisation (Allow / Deny)
+  protocol                    = "Tcp" # Protocole (Tcp / Udp / *)
+  source_port_range           = "*" # Port source
+  destination_port_range      = "80" # Port destination
+  source_address_prefix       = "*" # Adresse IP source
+  destination_address_prefix  = "*" # Adresse IP destination
+ }
+
+
+
 ## Network Security Rule
  security_rule {
   name                        = "allow_ssh_out"
