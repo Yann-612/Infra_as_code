@@ -64,31 +64,7 @@
           #####  Security rule  #####
 
 
-    - name: Open SSH and HTTP ports on Azure Network Security Group
-      azure.azcollection.azure_rm_securitygroup:
-        resource_group: "RG-az-lab"  # Change avec ton groupe de ressources
-        name: "Network-Security-Group"  # Change avec ton NSG
-        rules:
-          - name: AllowSSH
-            protocol: Tcp
-            source_port_range: "*"
-            destination_port_range: 22
-            access: Allow
-            priority: 100
-            direction: Inbound
-            source_address_prefix: "*"
-            destination_address_prefix: "*"
-
-          - name: AllowHTTP
-            protocol: Tcp
-            source_port_range: "*"
-            destination_port_range: 80
-            access: Allow
-            priority: 110
-            direction: Inbound
-            source_address_prefix: "*"
-            destination_address_prefix: "*"
-
+  
 
 
 
