@@ -1,0 +1,62 @@
+---
+- name: Installer un serveur web sur Ubuntu et Fedora
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Mettre à jour les paquets (Ubuntu)
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Mettre à jour les paquets (Fedora)
+      dnf:
+        name: "*"
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Installer Apache sur Ubuntu
+      apt:
+        name: apache2
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Installer Apache sur Fedora
+      dnf:
+        name: httpd
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Démarrer et activer Apache (Ubuntu)
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Démarrer et activer Apache (Fedora)
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Vérifier et créer /var/www/html si absent
+      file:
+        path: /var/www/html
+        state: directory
+        owner: apache
+        group: apache
+        mode: '0755'
+      when: ansible_os_family == "RedHat"
+
+    - name: Vérifier et créer /var/www/html si absent (Ubuntu)
+      file:
+        path: /var/www/html
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+      when: ansible_os_family == "Debian"
+
+

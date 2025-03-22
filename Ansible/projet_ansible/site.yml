@@ -1,0 +1,124 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+  ####  Mise à jour distro et paquets pour les 2 types de srv ####
+
+  - name: install updates for fedora
+    tags: always
+    ansible.builtin.dnf:
+      update_only:  yes
+      update_cache: yes
+    when: ansible_distribution == "Fedora"
+
+  - name: install updates for ubuntu
+    tags: always
+    ansible.builtin.apt:
+      upgrade:  dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  
+  - name: installer python3-libdnf5
+    ansible.builtin.dnf:
+        name: python3-libdnf5
+        state: present
+    when: ansible_distribution == "Fedora"
+
+
+      ### Creation de compte utilisateur (root) de service  ###
+
+  - name: create user
+    tags: always
+    ansible.builtin.user:
+      name: simone
+      groups: root
+
+  - name: add sudoers file for simone
+    tags: always
+    ansible.builtin.copy:
+      src: sudoer_simone
+      dest: /etc/sudoers.d/simone
+      owner:  root
+      group:  root
+      mode: 0440       
+
+
+
+        ####  WEB serveur Ubuntu ####
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: install apache on web servers
+    tags: web,apache
+    ansible.builtin.apt:
+      name:
+        - apache2
+        - libapache2-mod-php
+      state:  latest
+    when: ansible_distribution == "Ubuntu"
+
+
+  - name: activate apache on web servers
+    tags: web,apache
+    ansible.builtin.service:
+      name:  apache2
+      state:  started
+    when: ansible_distribution == "Ubuntu"
+
+
+
+      ### Site Web à copier ###
+
+  - name: copy html file for site
+    tags: apache,web,ubuntu
+    ansible.builtin.copy:
+      src:  default_site.html
+      dest: /var/www/html/index.html
+      owner:  root  
+      group:  root
+      mode: 0644
+
+
+        ### Serveur Web Fedora  ###
+
+  - name: install httpd on web servers
+    tags: web
+    ansible.builtin.dnf:
+      name:
+        - httpd
+        - php
+      state:  present
+    register: httpd_state
+    when: ansible_distribution == "Fedora"
+
+
+  - name: restart httpd
+    tags: web
+    ansible.builtin.service:
+      name: httpd
+      state: started
+      enabled: true
+    when: ansible_distribution == "Fedora"
+
+
+  - name: Vérifier et créer /var/www/html si absent
+    file:
+      path: /var/www/html
+      state: directory
+      owner: apache
+      group: apache
+      mode: '0755'
+    when: ansible_os_family == "RedHat"
+
+  - name: Vérifier et créer /var/www/html si absent (Ubuntu)
+    file:
+      path: /var/www/html
+      state: directory
+      owner: www-data
+      group: www-data
+      mode: '0755'
+    when: ansible_os_family == "Debian"

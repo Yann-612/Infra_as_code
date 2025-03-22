@@ -1,0 +1,5 @@
+pip install ansible[azure]
+pip install azure-cli
+pip install azure-mgmt-network
+pip install azure-identity
+

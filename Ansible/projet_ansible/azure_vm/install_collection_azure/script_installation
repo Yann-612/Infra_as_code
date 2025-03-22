@@ -1,0 +1,5 @@
+ansible-galaxy collection list | grep azure.azcollection
+
+
+ansible-galaxy collection install azure.azcollection
+
