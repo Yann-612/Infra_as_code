@@ -108,8 +108,8 @@ resource "azurerm_linux_virtual_machine" "vm" {
   disable_password_authentication = true
   admin_ssh_key {
     username   = var.admin_username
-    #public_key = file("C:/Users/yann_/.ssh/id_ed25519.pub")
-    #public_key = file("C:/Users/Yannick/.ssh/id_ed25519.pub")
+    #public_key = file("C:\Users\yann_/.ssh/id_ed25519.pub")
+    #public_key = file("C:\Users\Yannick/.ssh/id_ed25519.pub")
     public_key = file(var.ssh_public_key)
   }
 }

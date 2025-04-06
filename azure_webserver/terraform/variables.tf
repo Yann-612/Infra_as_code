@@ -65,5 +65,7 @@ variable "admin_username" {
 variable "ssh_public_key" {
   description = "Chemin vers la clé SSH publique"
   type        = string
-  default     = "~/.ssh/id_rsa.pub"
+  #default     = "~/.ssh/id_rsa.pub"
+  default     = "C:/Users/Yannick/.ssh/id_rsa.pub"
+
 }
