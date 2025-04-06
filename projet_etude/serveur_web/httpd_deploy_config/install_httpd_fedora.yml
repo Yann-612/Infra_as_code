@@ -1,0 +1,71 @@
+---
+- name: Installer un serveur web sur Ubuntu
+  hosts: all
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.10
+ 
+  tasks:
+    - name: Vérifier la version de Python
+      command: python3 --version
+      register: python_version
+
+    - name: Afficher la version de Python
+      debug:
+        msg: "Version de Python : {{ python_version.stdout }}"
+  
+      
+      
+      
+          ####  Serveur Ubuntu #### 
+
+    - name: Mettre à jour le paquets (Ubuntu)
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+
+    - name: Installer Apache sur Ubuntu
+      apt:
+        name: 
+          - apache2
+          - libapache2-mod-php  
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Démarrer et activer Apache (Ubuntu)
+      service:
+        name: apache2 
+        state: started
+        enabled: yes
+      when: ansible_os_family == "Debian"
+  
+
+    - name: Vérifier et créer /var/www/html si absent (Ubuntu)
+      file:
+        path: /var/www/html
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+      when: ansible_os_family == "Debian"
+
+
+    - name: copy html file for site
+      tags: apache,web,ubuntu
+      ansible.builtin.copy:
+        src:  default_site.html
+        dest: /var/www/html/index.html
+        owner:  root
+        group:  root
+        mode: 0644
+
+
+          #####  Security rule  #####
+
+
+  
+
+
+
+              #### Serveur Fedora  ###
