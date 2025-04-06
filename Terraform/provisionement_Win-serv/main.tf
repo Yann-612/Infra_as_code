@@ -56,3 +56,15 @@ resource "azurerm_windows_virtual_machine" "example" {
     version   = "latest"
   }
 }
+
+resource "azurerm_public_ip" "example" {
+  name                = "example-public-ip"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+
+  allocation_method = "Dynamic"
+}
+
+output "vm_public_ip" {
+  value = azurerm_public_ip.public.ip_address
+}
