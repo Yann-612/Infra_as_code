@@ -1,4 +1,4 @@
 [web_servers]
-4.233.223.143 ansible_user=adminuser ansible_ssh_private_key_file=/home/yannick/.ssh/ansible
+4.233.223.143 ansible_user=adminuser ansible_ssh_private_key_file=/home/yannick/.ssh/id_rsa
 52.143.148.57 ansible_user=adminuser ansible_ssh_private_key_file=/home/yannick/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3.10
 
