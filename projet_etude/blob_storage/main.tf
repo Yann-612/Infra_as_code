@@ -18,3 +18,9 @@ resource "azurerm_storage_account" "stockage_blob" {
     Environment = "Dev"
   }
 }
+
+resource "azurerm_storage_container" "containeur" {
+  name                  = "vincicontainer" 
+  storage_account_name  = azurerm_storage_account.stockage_blob.name
+  container_access_type = "private" # Or "blob" or "container"
+}
