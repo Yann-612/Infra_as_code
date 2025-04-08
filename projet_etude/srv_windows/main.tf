@@ -39,6 +39,29 @@ resource "azurerm_network_security_group" "example" {
 }
 
 
+resource "azurerm_virtual_machine_extension" "winrm_config" {
+  name                 = "winrm-config"
+  virtual_machine_id = azurerm_windows_virtual_machine.example.id # Replace with your VM ID
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.10" # Use the latest version
+
+  settings = jsonencode({
+    "commandToExecute" : "powershell -ExecutionPolicy Unrestricted -File c:\\Temp\\configure_winrm.ps1"
+  })
+
+
+protected_settings = jsonencode({
+  "fileUris" = ["https://vincistockageblob001.blob.core.windows.net/vincicontainer/configure_winrm.ps1"] # Example using a Blob Storage URI
+  # Alternatively, you can provide the script inline:
+  "script" : null
+  #   # Your PowerShell script content here
+  #   Enable-PSRemoting -Force
+  #   Set-Item WSMan:\\localhost\\Client\\TrustedHosts -Value "*" -Force
+  # EOF
+})
+}
+
 resource "azurerm_network_interface_security_group_association" "example" {
   network_interface_id      = azurerm_network_interface.example.id
   network_security_group_id = azurerm_network_security_group.example.id
