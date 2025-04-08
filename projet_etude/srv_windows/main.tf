@@ -23,7 +23,21 @@ resource "azurerm_network_security_group" "example" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+
+  security_rule {
+    name                       = "Allow-winrm"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "5985"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
 }
+
 
 resource "azurerm_network_interface_security_group_association" "example" {
   network_interface_id      = azurerm_network_interface.example.id
@@ -78,6 +92,27 @@ resource "azurerm_windows_virtual_machine" "example" {
     offer     = "WindowsServer"
     sku       = "2022-Datacenter"
     version   = "latest"
+  }
+  
+ # Enable WinRM using a remote-exec provisioner
+  provisioner "remote-exec" {
+    inline = [
+      "powershell.exe -Command \"Set-Service -Name WinRM -StartupType Automatic\"",
+      "powershell.exe -Command \"Start-Service -Name WinRM\"",
+      "powershell.exe -Command \"winrm quickconfig -Force\"",
+      "powershell.exe -Command \"winrm set winrm/config/service/auth @{Basic='true'}\"",
+      "powershell.exe -Command \"winrm set winrm/config/service @{AllowUnencrypted='true'}\"",
+      "powershell.exe -Command \"New-NetFirewallRule -Name 'WinRM_HTTP' -DisplayName 'WinRM over HTTP' -Protocol TCP -LocalPort 5985 -Action Allow\"",
+      "powershell.exe -Command \"New-NetFirewallRule -Name 'WinRM_HTTPS' -DisplayName 'WinRM over HTTPS' -Protocol TCP -LocalPort 5986 -Action Allow\""
+    ]
+
+    connection {
+      type     = "winrm"
+      user     = "adminuser"
+      password = "Pa$$word1234!" # password
+      host     = azurerm_windows_virtual_machine.example.public_ip_address
+      port     = 5985
+    }
   }
 }
 
