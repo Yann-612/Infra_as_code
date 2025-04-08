@@ -43,7 +43,6 @@ resource "azurerm_network_interface_security_group_association" "example" {
   network_interface_id      = azurerm_network_interface.example.id
   network_security_group_id = azurerm_network_security_group.example.id
 }
-
 resource "azurerm_virtual_network" "example" {
   name                = "example-network"
   address_space       = ["10.0.0.0/16"]
@@ -72,7 +71,6 @@ resource "azurerm_network_interface" "example" {
   }
 }
 
-
 resource "azurerm_windows_virtual_machine" "example" {
   name                = "example-machine"
   resource_group_name = azurerm_resource_group.example.name
@@ -98,6 +96,28 @@ resource "azurerm_windows_virtual_machine" "example" {
 }
 
 
+resource "azurerm_virtual_machine_extension" "winrm_config" {
+  name                 = "winrm-config"
+  virtual_machine_id   = azurerm_windows_virtual_machine.example.id
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.10"
+
+  settings = <<SETTINGS
+    {
+      "commandToExecute": "powershell.exe -ExecutionPolicy Bypass -File C:\\Windows\\Temp\\configure_winrm.ps1"
+    }
+  SETTINGS
+
+  protected_settings = <<PROTECTED_SETTINGS
+    {
+      "script": "${base64encode(file("configure_winrm.ps1"))}"
+    }
+  PROTECTED_SETTINGS
+}
+
+
+
 resource "azurerm_public_ip" "example" {
   name                = "example-public-ip"
   location            = azurerm_resource_group.example.location
@@ -106,7 +126,6 @@ resource "azurerm_public_ip" "example" {
   allocation_method = "Static"
   sku               = "Standard"
 }
-
 
 output "vm_public_ip" {
   value = azurerm_public_ip.example.ip_address
