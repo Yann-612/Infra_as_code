@@ -9,7 +9,7 @@ variable "location" {
 variable "resource_group_name" {
   description = "The name of the Azure resource group"
   type        = string
-  default     = "RG-az-lab"
+  default     = "RG-Cyna-lab"
 }
 
 # Nom du security group
@@ -23,14 +23,14 @@ variable "security_group_name" {
 variable "vnet_name" {
   description = "Nom du réseau virtuel"
   type        = string
-  default     = "Vnet-az-lab"
+  default     = "Vnet-Cyna-lab"
 }
 
 # 📌 Nom du sous-réseau
 variable "subnet_name" {
   description = "Nom du sous-réseau"
   type        = string
-  default     = "Subnet-az-lab"
+  default     = "Subnet-Cyna-lab"
 }
 
 # 🖥️ Nom de la machine virtuelle

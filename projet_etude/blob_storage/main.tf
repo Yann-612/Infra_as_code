@@ -1,15 +1,15 @@
  # Resource Group
-resource "azurerm_resource_group" "rg_az_lab" {
-  name     = "RG-az-lab"
-  location = "West Europe" # Replace with your desired Azure region
+resource "azurerm_resource_group" "RG" {
+  name     = var.resource_group_name
+  location = var.location
 }
 
 ##  Blob stockage
 
 resource "azurerm_storage_account" "stockage_blob" {
   name                     = "vincistockageblob001"
-  resource_group_name      = azurerm_resource_group.rg_az_lab.name
-  location                 = azurerm_resource_group.rg_az_lab.location
+  resource_group_name      = var.resource_group_name
+  location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
   
