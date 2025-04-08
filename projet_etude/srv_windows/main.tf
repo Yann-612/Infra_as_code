@@ -93,8 +93,28 @@ resource "azurerm_windows_virtual_machine" "example" {
     sku       = "2022-Datacenter"
     version   = "latest"
   }
-  
- # Enable WinRM using a remote-exec provisioner
+ 
+resource "azurerm_virtual_machine_extension" "winrm_config" {
+  name                 = "winrm-config"
+  virtual_machine_id   = azurerm_windows_virtual_machine.example.id
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.10"
+  settings = <<SETTINGS
+    {
+      "commandToExecute": "powershell.exe -ExecutionPolicy Bypass -File configure_winrm.ps1"
+    }
+  SETTINGS
+  protected_settings = <<PROTECTED_SETTINGS
+    {
+      "script": "${base64encode(file("configure_winrm.ps1"))}"
+    }
+  PROTECTED_SETTINGS
+}
+
+
+
+ #Enable WinRM using a remote-exec provisioner
   provisioner "remote-exec" {
     inline = [
       "powershell.exe -Command \"Set-Service -Name WinRM -StartupType Automatic\"",
@@ -112,6 +132,7 @@ resource "azurerm_windows_virtual_machine" "example" {
       password = "Pa$$word1234!" # password
       host     = azurerm_windows_virtual_machine.example.public_ip_address
       port     = 5985
+      timeout  = "10m"
     }
   }
 }
