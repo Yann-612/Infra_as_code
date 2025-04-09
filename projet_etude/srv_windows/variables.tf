@@ -1,76 +1,65 @@
-# 🏢 Nom du groupe de ressources
+# Nom du groupe de ressources
 variable "resource_group_name" {
-  description = "The name of the Azure resource group"
+  description = "Nom du groupe de ressources Azure"
   type        = string
-  default     = "RG-infra"
 }
 
-#🌍 Emplacement des ressources Azure
+# Emplacement des ressources Azure
 variable "location" {
   description = "Région Azure où seront déployées les ressources"
   type        = string
-  default     = "France Central"
 }
 
-
-# Nom du security group
+# Nom du groupe de sécurité réseau
 variable "security_group_name" {
-  description = "Nom du groupe de sécurité"
+  description = "Nom du groupe de sécurité réseau"
   type        = string
-  default     = "Network-Security-Group"
 }
 
-# 🌐 Nom du réseau virtuel
+# Nom du réseau virtuel
 variable "vnet_name" {
   description = "Nom du réseau virtuel"
   type        = string
-  default     = "Vnet-Cyna-lab"
 }
 
-# 📌 Nom du sous-réseau
+# Nom du sous-réseau
 variable "subnet_name" {
   description = "Nom du sous-réseau"
   type        = string
-  default     = "Subnet-Cyna-lab"
 }
 
-# 🖥️ Nom de la machine virtuelle
+# Nom de la machine virtuelle
 variable "vm_name" {
   description = "Nom de la machine virtuelle"
   type        = string
-  default     = "srv"
 }
 
-# 🖥️ Nom de l'hôte
+# Nom de l'hôte
 variable "hostname" {
   description = "Nom de l'hôte pour la machine virtuelle"
   type        = string
-  default     = "srv"
 }
 
-# 📏 Type de la machine virtuelle
+# Taille de la machine virtuelle
 variable "vm_size" {
-  description = "Taille de la VM Azure"
+  description = "Taille de la machine virtuelle"
   type        = string
-  default     = "Standard_B1s"
 }
 
+# Nom de l'adresse IP publique
 variable "public_ip_name" {
-  description = "The name of the public IP address"
+  description = "Nom de l'adresse IP publique"
   type        = string
 }
 
-
-# 👤 Nom de l'utilisateur administrateur
+# Nom de l'utilisateur administrateur
 variable "admin_username" {
   description = "Nom de l'utilisateur administrateur de la VM"
   type        = string
-  default     = "adminuser"
 }
 
-# 🔑 Clé SSH publique pour la connexion
+# Clé SSH publique pour la connexion
 variable "ssh_public_key" {
-  description = "Chemin vers la clé SSH publique"
+  description = "Chemin vers la clé SSH publique ou contenu de la clé"
   type        = string
-  default     = "~/.ssh/id_rsa.pub"
 }
