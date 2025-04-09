@@ -1,16 +1,17 @@
-# 🌍 Emplacement des ressources Azure
+# 🏢 Nom du groupe de ressources
+variable "resource_group_name" {
+  description = "The name of the Azure resource group"
+  type        = string
+  default     = "RG-infra"
+}
+
+#🌍 Emplacement des ressources Azure
 variable "location" {
   description = "Région Azure où seront déployées les ressources"
   type        = string
   default     = "France Central"
 }
 
-# 🏢 Nom du groupe de ressources
-variable "resource_group_name" {
-  description = "The name of the Azure resource group"
-  type        = string
-  default     = "RG-az-lab"
-}
 
 # Nom du security group
 variable "security_group_name" {
@@ -23,28 +24,28 @@ variable "security_group_name" {
 variable "vnet_name" {
   description = "Nom du réseau virtuel"
   type        = string
-  default     = "Vnet-az-lab"
+  default     = "Vnet-Cyna-lab"
 }
 
 # 📌 Nom du sous-réseau
 variable "subnet_name" {
   description = "Nom du sous-réseau"
   type        = string
-  default     = "Subnet-az-lab"
+  default     = "Subnet-Cyna-lab"
 }
 
 # 🖥️ Nom de la machine virtuelle
 variable "vm_name" {
   description = "Nom de la machine virtuelle"
   type        = string
-  default     = "Web-srv"
+  default     = "srv"
 }
 
 # 🖥️ Nom de l'hôte
 variable "hostname" {
   description = "Nom de l'hôte pour la machine virtuelle"
   type        = string
-  default     = "web-srv"
+  default     = "srv"
 }
 
 # 📏 Type de la machine virtuelle
@@ -53,6 +54,12 @@ variable "vm_size" {
   type        = string
   default     = "Standard_B1s"
 }
+
+variable "public_ip_name" {
+  description = "The name of the public IP address"
+  type        = string
+}
+
 
 # 👤 Nom de l'utilisateur administrateur
 variable "admin_username" {

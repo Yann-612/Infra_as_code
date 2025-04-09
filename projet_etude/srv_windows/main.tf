@@ -2,15 +2,15 @@
 # The script includes the creation of a resource group, virtual network, subnet, network interface, and the virtual machine itself.
 # It also outputs the public IP address of the virtual machine.
 
-resource "azurerm_resource_group" "example" {
-  name     = "example-resources"
-  location = "West Europe"
+resource "azurerm_resource_group" "RG_infra" {
+  name     = var.resource_group_name
+  location = var.location
 }
 
-resource "azurerm_network_security_group" "example" {
-  name                = "example-nsg"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+resource "azurerm_network_security_group" "security_group" {
+  name                = "RG-infra-nsg"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   security_rule {
     name                       = "Allow-RDP"
@@ -25,7 +25,7 @@ resource "azurerm_network_security_group" "example" {
   }
 
   security_rule {
-    name                       = "Allow-winrm"
+    name                       = "Allow-winrm-5985"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
@@ -36,75 +36,80 @@ resource "azurerm_network_security_group" "example" {
     destination_address_prefix = "*"
   }
 
+  security_rule {
+    name                       = "Allow-winrm-5986"
+    priority                   = 101
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "5986"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
 }
 
 
 resource "azurerm_virtual_machine_extension" "winrm_config" {
   name                 = "winrm-config"
-  virtual_machine_id = azurerm_windows_virtual_machine.example.id # Replace with your VM ID
+  virtual_machine_id   = azurerm_windows_virtual_machine.srv.id # Replace with your VM ID
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"
   type_handler_version = "1.10" # Use the latest version
 
   settings = jsonencode({
-    "commandToExecute" : "powershell -ExecutionPolicy Unrestricted -File c:\\Temp\\configure_winrm.ps1"
+    
+    "commandToExecute" = "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-Item -Path C:\\Temp -ItemType Directory -Force; Enable-PSRemoting -Force; Set-Item WSMan:\\localhost\\Client\\TrustedHosts -Value '*' -Force; winrm quickconfig -q; winrm set winrm/config/service/auth '@{Basic=\"true\"}'; winrm set winrm/config/service '@{AllowUnencrypted=\"true\"}'; Restart-Service WinRM\""
+
   })
-
-
-protected_settings = jsonencode({
-  "fileUris" = ["https://vincistockageblob001.blob.core.windows.net/vincicontainer/configure_winrm.ps1"] # Example using a Blob Storage URI
-  # Alternatively, you can provide the script inline:
-  "script" : null
-  #   # Your PowerShell script content here
-  #   Enable-PSRemoting -Force
-  #   Set-Item WSMan:\\localhost\\Client\\TrustedHosts -Value "*" -Force
-  # EOF
-})
 }
 
-resource "azurerm_network_interface_security_group_association" "example" {
-  network_interface_id      = azurerm_network_interface.example.id
-  network_security_group_id = azurerm_network_security_group.example.id
+
+resource "azurerm_network_interface_security_group_association" "nic_sec_group" {
+  network_interface_id      = azurerm_network_interface.nic.id
+  network_security_group_id = azurerm_network_security_group.security_group.id
 }
 
-resource "azurerm_virtual_network" "example" {
-  name                = "example-network"
+resource "azurerm_virtual_network" "vnet" {
+  name                = var.vnet_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
   address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
 }
 
-resource "azurerm_subnet" "example" {
-  name                 = "internal"
-  resource_group_name  = azurerm_resource_group.example.name
-  virtual_network_name = azurerm_virtual_network.example.name
+resource "azurerm_subnet" "subnet" {
+  name                 = var.subnet_name
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.2.0/24"]
 }
 
-resource "azurerm_network_interface" "example" {
-  name                = "example-nic"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+resource "azurerm_network_interface" "nic" {
+  name                = "ethernet-${var.vm_name}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.example.id
-    private_ip_address_allocation = "Static"
-    private_ip_address            = "10.0.2.10"
-    public_ip_address_id          = azurerm_public_ip.example.id
+    subnet_id                     = azurerm_subnet.subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.public.id
   }
 }
 
 
-resource "azurerm_windows_virtual_machine" "example" {
-  name                = "example-machine"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
+## machine virtuel
+
+resource "azurerm_windows_virtual_machine" "srv" {
+  name                = var.vm_name
+  resource_group_name = var.resource_group_name
+  location            = var.location
   size                = "Standard_F4"
   admin_username      = "adminuser"
   admin_password      = "Pa$$word1234!"
   network_interface_ids = [
-    azurerm_network_interface.example.id,
+    azurerm_network_interface.nic.id,
   ]
 
   os_disk {
@@ -121,10 +126,10 @@ resource "azurerm_windows_virtual_machine" "example" {
 }
 
 
-resource "azurerm_public_ip" "example" {
-  name                = "example-public-ip"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+resource "azurerm_public_ip" "public" {
+  name                = "public-ip"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   allocation_method = "Static"
   sku               = "Standard"
@@ -132,5 +137,6 @@ resource "azurerm_public_ip" "example" {
 
 
 output "vm_public_ip" {
-  value = azurerm_public_ip.example.ip_address
+  value       = azurerm_public_ip.public.ip_address
+  description = " The public IP adress of the virtual machine"
 }

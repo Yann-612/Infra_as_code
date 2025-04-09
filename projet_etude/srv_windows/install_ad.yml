@@ -1,7 +1,7 @@
 ---
 - name: Installer Active Directory Domain Services (AD DS)
   hosts: ad_servers  # Groupe de serveurs AD dans votre inventaire Ansible
-  become: true
+  become:
   vars:
     domain_name: "cyna.local"  # Remplacez par votre nom de domaine
     safe_mode_password: "YourSafeModePassword123!"  # Remplacez par un mot de passe de mode sans échec sécurisé
