@@ -1,0 +1,7 @@
+resource_group_name = "RG-infra"
+location            = "France Central"
+vnet_name           = "Vnet-Cyna-lab"
+subnet_name         = "Subnet-Cyna-lab"
+vm_name             = "windows-ad-server"
+admin_username      = "adminuser"
+admin_password      = "Pa$$word1234!"

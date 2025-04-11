@@ -1,44 +1,56 @@
- # Resource Group
+# Créer un groupe de ressources
 resource "azurerm_resource_group" "RG" {
   name     = var.resource_group_name
   location = var.location
 }
 
-##  Blob stockage
-
+# Créer un compte de stockage
 resource "azurerm_storage_account" "stockage_blob" {
-  name                     = "vincistockageblob001"
-  resource_group_name      = var.resource_group_name
-  location                 = var.location
+  name                     = "vincistockageblob001" # Le nom doit être unique globalement
+  resource_group_name      = azurerm_resource_group.RG.name
+  location                 = azurerm_resource_group.RG.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  
-  # Optional settings (customize as needed)
+
+  # Paramètres optionnels
   access_tier = "Cool"
   tags = {
     Environment = "Dev"
   }
 }
 
-
-## Containeur
-
+# Créer un conteneur de stockage
 resource "azurerm_storage_container" "containeur" {
-  name                  = "vincicontainer" 
-  storage_account_id  = azurerm_storage_account.stockage_blob.id
-  container_access_type = "private" # Or "blob" or "container"
+  name                  = "vincicontainer"
+  storage_account_id    = azurerm_storage_account.stockage_blob.id
+  container_access_type = "private" # Options : "private", "blob", "container"
 }
 
-
-## Fichier à Uploader 
-
+# Télécharger un fichier blob dans le conteneur
 resource "azurerm_storage_blob" "stockage_blob" {
-  name           = "configure_winrm.ps1" # le fichier à uploader
-  storage_account_name = azurerm_storage_account.stockage_blob.name
+  name                   = "configure_winrm.ps1" # Nom du fichier dans le conteneur
+  storage_account_name   = azurerm_storage_account.stockage_blob.name
   storage_container_name = azurerm_storage_container.containeur.name
-  type           = "Block" # Or "Append" or "Page"
-  source         = "/home/yannick/Infra_as_code/projet_etude/blob_storage/configure_winrm.ps1" # Replace with the actual path to your file
+  type                   = "Block" # Options : "Block", "Append", "Page"
+  source                 = "C:/Infra_as_code/projet_etude/blob_storage/configure_winrm.ps1" # Chemin vers le fichier local
 
-  # Optional settings
-  content_type = "text/plain" # Adjust based on the file type
+  # Paramètres optionnels
+  content_type = "text/plain" # Ajustez en fonction du type de fichier
+}
+
+# Outputs pour afficher les informations importantes
+output "storage_account_name" {
+  value       = azurerm_storage_account.stockage_blob.name
+  description = "Le nom du compte de stockage"
+}
+
+output "storage_account_key" {
+  value       = azurerm_storage_account.stockage_blob.primary_access_key
+  description = "La clé d'accès primaire du compte de stockage"
+  sensitive   = true
+}
+
+output "blob_url" {
+  value       = azurerm_storage_blob.stockage_blob.url
+  description = "L'URL du fichier blob"
 }

@@ -50,21 +50,26 @@ resource "azurerm_network_security_group" "security_group" {
 
 }
 
-
 resource "azurerm_virtual_machine_extension" "winrm_config" {
   name                 = "winrm-config"
-  virtual_machine_id   = azurerm_windows_virtual_machine.srv.id # Replace with your VM ID
+  virtual_machine_id   = azurerm_windows_virtual_machine.srv.id
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"
-  type_handler_version = "1.10" # Use the latest version
+  type_handler_version = "1.10"
 
-  settings = jsonencode({
-    
-    "commandToExecute" = "powershell.exe -ExecutionPolicy Unrestricted -Command \"New-Item -Path C:\\Temp -ItemType Directory -Force; Enable-PSRemoting -Force; Set-Item WSMan:\\localhost\\Client\\TrustedHosts -Value '*' -Force; winrm quickconfig -q; winrm set winrm/config/service/auth '@{Basic=\"true\"}'; winrm set winrm/config/service '@{AllowUnencrypted=\"true\"}'; Restart-Service WinRM\""
+  settings = <<SETTINGS
+    {
+      "script": "powershell.exe -ExecutionPolicy Unrestricted -File configure_winrm.ps1"
+    }
+  SETTINGS
 
-  })
+  protected_settings = <<PROTECTED_SETTINGS
+    {
+      "storageAccountName": "${data.azurerm_storage_account.existing_storage_account.name}",
+      "storageAccountKey": "${data.azurerm_storage_account.existing_storage_account.primary_access_key}"
+    }
+  PROTECTED_SETTINGS
 }
-
 
 resource "azurerm_network_interface_security_group_association" "nic_sec_group" {
   network_interface_id      = azurerm_network_interface.nic.id
@@ -98,7 +103,6 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-
 ## machine virtuel
 
 resource "azurerm_windows_virtual_machine" "srv" {
@@ -125,7 +129,6 @@ resource "azurerm_windows_virtual_machine" "srv" {
   }
 }
 
-
 resource "azurerm_public_ip" "public" {
   name                = "public-ip"
   location            = var.location
@@ -135,8 +138,13 @@ resource "azurerm_public_ip" "public" {
   sku               = "Standard"
 }
 
-
 output "vm_public_ip" {
   value       = azurerm_public_ip.public.ip_address
   description = " The public IP adress of the virtual machine"
 }
+
+data "azurerm_storage_account" "existing_storage_account" {
+  name                = "vincistockageblob001"
+  resource_group_name = "Correct-Resource-Group-Name" # Replace with the actual resource group name
+}
+

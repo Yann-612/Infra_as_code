@@ -52,6 +52,11 @@ variable "public_ip_name" {
   type        = string
 }
 
+variable "storage_account_name" {
+  description = "Nom du compte de stockage Azure"
+  type        = string
+}
+
 # Nom de l'utilisateur administrateur
 variable "admin_username" {
   description = "Nom de l'utilisateur administrateur de la VM"

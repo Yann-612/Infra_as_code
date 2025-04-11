@@ -30,3 +30,6 @@ admin_username = "adminuser"
 
 #Clé SSH publique pour la connexion
 ssh_public_key = "C:/Users/Yannick/.ssh/id_rsa.pub"
+
+# Nom du compte de stockage
+storage_account_name = "vincistockageblob001"
