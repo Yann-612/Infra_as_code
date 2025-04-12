@@ -22,6 +22,21 @@ variable "subnet_name" {
   type        = string
 }
 
+variable "vnet" {
+  description = "Configuration du réseau virtuel"
+  type = object({
+    name          = string
+    address_space = list(string)
+  })
+}
+
+variable "subnet" {
+  description = "Configuration du sous-réseau"
+  type = object({
+    name           = string
+    address_prefix = string
+  })
+}
 
 # Nom du security group
 variable "security_group_name" {

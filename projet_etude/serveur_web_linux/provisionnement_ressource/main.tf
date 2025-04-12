@@ -1,86 +1,94 @@
+module "shared_variables" {
+  source = "../../modules/Shared_variables"
+
+  resource_group_name = "RG-infra"
+  location            = "France Central"
+  vnet = {
+    name          = "vnet-infra"
+    address_space = ["10.0.0.0/16"]
+  }
+  subnet = {
+    name           = "subnet-web"
+    address_prefix = "10.0.1.0/24"
+  }
+}
+
 ## Resource Group
 resource "azurerm_resource_group" "RG" {
-  name     = var.resource_group_name
-  location = var.location
+  name     = module.shared_variables.resource_group_name
+  location = module.shared_variables.location
 }
 
 ## Vnet
 resource "azurerm_virtual_network" "vnet" {
-  name                = var.vnet.name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  address_space       = var.vnet.address_space
-
-  depends_on = [azurerm_resource_group.RG]
+  name                = module.shared_variables.vnet.name
+  location            = module.shared_variables.location
+  resource_group_name = module.shared_variables.resource_group_name
+  address_space       = module.shared_variables.vnet.address_space
 }
 
 ## Subnet
 resource "azurerm_subnet" "subnet" {
-  name                 = var.subnet.name
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = var.vnet.name
-  address_prefixes     = [var.subnet.address_prefix]
-
-  depends_on = [azurerm_virtual_network.vnet]
+  name                 = module.shared_variables.subnet.name
+  resource_group_name  = module.shared_variables.resource_group_name
+  virtual_network_name = module.shared_variables.vnet.name
+  address_prefixes     = [module.shared_variables.subnet.address_prefix]
 }
+
 
 ## Network Security Group
 resource "azurerm_network_security_group" "security_group" {
   name                = var.security_group_name
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = module.shared_variables.resource_group_name
 
-  depends_on = [azurerm_resource_group.RG]
+  depends_on = [module.shared_variables]
+}
 
 
 ## Network Security Rule
- security_rule {
-  name                        = "allow_ssh_in"
-  priority                    = 1001  # Priorité de la règle
-  direction                   = "Inbound" # Sens du flux  (Inbound / Outbound)
-  access                      = "Allow" # Autorisation (Allow / Deny)
-  protocol                    = "Tcp" # Protocole (Tcp / Udp / *)
-  source_port_range           = "*" # Port source
-  destination_port_range      = "22" # Port destination
-  source_address_prefix       = "*" # Adresse IP source
-  destination_address_prefix  = "*" # Adresse IP destination
- }
+resource "azurerm_network_security_rule" "allow_ssh_in" {
+   name                        = "allow_ssh_in"
+   priority                    = 1001
+   direction                   = "Inbound"
+   access                      = "Allow"
+   protocol                    = "Tcp"
+   source_port_range           = "*"
+   destination_port_range      = "22"
+   source_address_prefix       = "*"
+   destination_address_prefix  = "*"
+   network_security_group_name = azurerm_network_security_group.security_group.name
+   resource_group_name         = module.shared_variables.resource_group_name
+   }
 
- security_rule {
-  name                        = "allow_http_in"
-  priority                    = 1002  # Priorité de la règle
-  direction                   = "Inbound" # Sens du flux  (Inbound / Outbound)
-  access                      = "Allow" # Autorisation (Allow / Deny)
-  protocol                    = "Tcp" # Protocole (Tcp / Udp / *)
-  source_port_range           = "*" # Port source
-  destination_port_range      = "80" # Port destination
-  source_address_prefix       = "*" # Adresse IP source
-  destination_address_prefix  = "*" # Adresse IP destination
- }
+resource "azurerm_network_security_rule" "allow_http_in" {
+   name                        = "allow_http_in"
+   priority                    = 1002
+   direction                   = "Inbound"
+   access                      = "Allow"
+   protocol                    = "Tcp"
+   source_port_range           = "*"
+   destination_port_range      = "80"
+   source_address_prefix       = "*"
+   destination_address_prefix  = "*"
+   network_security_group_name = azurerm_network_security_group.security_group.name
+   resource_group_name         = module.shared_variables.resource_group_name
+   }
 
-  security_rule {
-    name                        = "allow_all_out"
-    priority                    = 1003  # Priorité de la règle
-    direction                   = "Outbound" # Sens du flux  (Inbound / Outbound)
-    access                      = "Allow" # Autorisation (Allow / Deny)
-    protocol                    = "*" # Protocole (Tcp / Udp / *)
-    source_port_range           = "*" # Port source
-    destination_port_range      = "*" # Port destination
-    source_address_prefix       = "*" # Adresse IP source
-    destination_address_prefix  = "*" # Adresse IP destination
-  }
-}
+resource "azurerm_network_security_rule" "allow_all_out" {
+   name                        = "allow_all_out"
+   priority                    = 1003
+   direction                   = "Outbound"
+   access                      = "Allow"
+   protocol                    = "*"
+   source_port_range           = "*"
+   destination_port_range      = "*"
+   source_address_prefix       = "*"
+   destination_address_prefix  = "*"
+   network_security_group_name = azurerm_network_security_group.security_group.name
+   resource_group_name         = module.shared_variables.resource_group_name
+   }
 
-
-
-## Network Watcher
-resource "azurerm_network_watcher" "net-watcher" {
-  name                = "net-watcher"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.RG.name
-
-  depends_on = [azurerm_resource_group.RG]
-}
 
 ## Virtual Machine 
 resource "azurerm_linux_virtual_machine" "vm" {
@@ -109,7 +117,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   disable_password_authentication = true
   admin_ssh_key {
     username   = var.admin_username
-    public_key = file(var.ssh_public_key)
+    public_key = var.ssh_public_key
   }
 }
 
@@ -130,12 +138,12 @@ resource "azurerm_network_interface" "nic" {
 ## Public IP
 resource "azurerm_public_ip" "public" {
   name                = "public-ip"
-  resource_group_name = var.resource_group_name
+  resource_group_name = module.shared_variables.resource_group_name
   location            = var.location
   allocation_method   = "Static"
-  sku                 = "Standard" 
+  sku                 = "Standard"
 
-  depends_on = [azurerm_resource_group.RG]
+  depends_on = [module.shared_variables]
 }
 
 ## Network Interface Security Group Association
@@ -143,3 +151,4 @@ resource "azurerm_network_interface_security_group_association" "nic_sec_group" 
   network_interface_id      = azurerm_network_interface.nic.id
   network_security_group_id = azurerm_network_security_group.security_group.id
 }
+

@@ -1,12 +1,12 @@
 # Variables de configuration pour le provisionnement d'une machine virtuelle Linux sur Azure avec Terraform
-resource_group_name = "RG-linux"
+resource_group_name = "RG-infra"
 location = "France Central"
-vnet_name = "Vnet-Cyna-lab"
-subnet_name = "Subnet-Cyna-lab"
-security_group_name = "NSG-Cyna-lab"
+vnet_name = "Vnet-Infra"
+subnet_name = "Subnet-web"
+security_group_name = "NSG-srv-linux"
 
 # Nom de la machine virtuelle (doit être unique dans le groupe de ressources)
-vm_name = "VM-Cyna-lab"
+vm_name = "srv-linux"
 vm_size = "Standard_B2s"
 admin_username = "adminuser"
 hostname = "Ubuntu"
@@ -37,6 +37,6 @@ vnet = {
 
 # Configuration du Subnet
 subnet = {
-  name           = "subnet-infra"
+  name           = "subnet-web"
   address_prefix = "10.0.1.0/24"
 }
