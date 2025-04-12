@@ -1,5 +1,5 @@
 module "shared_variables" {
-  source = "../../modules/Shared_variables"
+  source = "../../Modules/Shared_variables"
 
   resource_group_name = "RG-infra"
   location            = "France Central"
@@ -25,6 +25,8 @@ resource "azurerm_virtual_network" "vnet" {
   location            = module.shared_variables.location
   resource_group_name = module.shared_variables.resource_group_name
   address_space       = module.shared_variables.vnet.address_space
+
+  depends_on = [azurerm_resource_group.RG]
 }
 
 ## Subnet
@@ -33,6 +35,8 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name  = module.shared_variables.resource_group_name
   virtual_network_name = module.shared_variables.vnet.name
   address_prefixes     = [module.shared_variables.subnet.address_prefix]
+
+  depends_on = [azurerm_virtual_network.vnet]
 }
 
 
@@ -42,7 +46,7 @@ resource "azurerm_network_security_group" "security_group" {
   location            = var.location
   resource_group_name = module.shared_variables.resource_group_name
 
-  depends_on = [module.shared_variables]
+  depends_on = [module.shared_variables, azurerm_resource_group.RG]
 }
 
 
@@ -143,7 +147,7 @@ resource "azurerm_public_ip" "public" {
   allocation_method   = "Static"
   sku                 = "Standard"
 
-  depends_on = [module.shared_variables]
+  depends_on = [module.shared_variables, azurerm_resource_group.RG]
 }
 
 ## Network Interface Security Group Association
