@@ -59,3 +59,21 @@ variable "vm_name" {
   description = "Nom de la machine virtuelle"
   type        = string
 }
+
+variable "os_disk" {
+  description = "Configuration du disque OS"
+  type = object({
+    caching              = string
+    storage_account_type = string
+  })
+}
+
+variable "source_image_reference" {
+  description = "Référence de l'image source pour la VM"
+  type = object({
+    publisher = string
+    offer     = string
+    sku       = string
+    version   = string
+  })
+}

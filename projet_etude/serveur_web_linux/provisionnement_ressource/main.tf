@@ -6,20 +6,20 @@ resource "azurerm_resource_group" "RG" {
 
 ## Vnet
 resource "azurerm_virtual_network" "vnet" {
-  name                = var.vnet_name
+  name                = var.vnet.name
   location            = var.location
   resource_group_name = var.resource_group_name
-  address_space       = ["10.0.0.0/16"]
+  address_space       = var.vnet.address_space
 
   depends_on = [azurerm_resource_group.RG]
 }
 
 ## Subnet
 resource "azurerm_subnet" "subnet" {
-  name                 = var.subnet_name
+  name                 = var.subnet.name
   resource_group_name  = var.resource_group_name
-  virtual_network_name = var.vnet_name
-  address_prefixes     = ["10.0.1.0/24"]
+  virtual_network_name = var.vnet.name
+  address_prefixes     = [var.subnet.address_prefix]
 
   depends_on = [azurerm_virtual_network.vnet]
 }
@@ -58,21 +58,20 @@ resource "azurerm_network_security_group" "security_group" {
   destination_address_prefix  = "*" # Adresse IP destination
  }
 
-
-
-## Network Security Rule
- security_rule {
-  name                        = "allow_ssh_out"
-  priority                    = 1003
-  direction                   = "Outbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"  
- }
+  security_rule {
+    name                        = "allow_all_out"
+    priority                    = 1003  # Priorité de la règle
+    direction                   = "Outbound" # Sens du flux  (Inbound / Outbound)
+    access                      = "Allow" # Autorisation (Allow / Deny)
+    protocol                    = "*" # Protocole (Tcp / Udp / *)
+    source_port_range           = "*" # Port source
+    destination_port_range      = "*" # Port destination
+    source_address_prefix       = "*" # Adresse IP source
+    destination_address_prefix  = "*" # Adresse IP destination
+  }
 }
+
+
 
 ## Network Watcher
 resource "azurerm_network_watcher" "net-watcher" {
@@ -93,24 +92,24 @@ resource "azurerm_linux_virtual_machine" "vm" {
   network_interface_ids = [
     azurerm_network_interface.nic.id
   ]
+
   os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts"
-    version   = "latest"
+    caching              = var.os_disk.caching
+    storage_account_type = var.os_disk.storage_account_type
   }
 
-  computer_name  = var.hostname
+  source_image_reference {
+    publisher = var.source_image_reference.publisher
+    offer     = var.source_image_reference.offer
+    sku       = var.source_image_reference.sku
+    version   = var.source_image_reference.version
+  }
+
+  computer_name                  = var.hostname
   disable_password_authentication = true
   admin_ssh_key {
     username   = var.admin_username
-    public_key = file("C:/Users/yann_/.ssh/id_ed25519.pub")
-    #public_key = file("C:/Users/Yannick/.ssh/id_ed25519.pub")
-    #public_key = file(var.ssh_public_key)
+    public_key = file(var.ssh_public_key)
   }
 }
 
