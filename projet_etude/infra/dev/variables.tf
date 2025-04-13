@@ -3,5 +3,5 @@ variable "rg_name" {
 }
 
 variable "location" {
-  default = "westeurope"
+  default = "France Central"
 }
