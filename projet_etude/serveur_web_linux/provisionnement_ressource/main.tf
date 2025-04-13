@@ -1,17 +1,12 @@
-module "shared_variables" {
-  source = "../../Modules/Shared_variables"
 
-  resource_group_name = "RG-infra"
-  location            = "France Central"
-  vnet = {
-    name          = "vnet-infra"
-    address_space = ["10.0.0.0/16"]
-  }
-  subnet = {
-    name           = "subnet-web"
-    address_prefix = "10.0.1.0/24"
-  }
+
+module "RG" {
+  source = "../../Modules/resource_group"
+  name   = var.RG_name
+  location = var.location
 }
+
+# Removed the misplaced vnet block as it is not valid here.
 
 ## Resource Group
 resource "azurerm_resource_group" "RG" {
@@ -30,11 +25,13 @@ resource "azurerm_virtual_network" "vnet" {
 }
 
 ## Subnet
+# Removed the incomplete azurerm_subnet block to avoid duplication and missing attributes.
+## Subnet
 resource "azurerm_subnet" "subnet" {
-  name                 = module.shared_variables.subnet.name
+  name                 = "subnet-web"
   resource_group_name  = module.shared_variables.resource_group_name
   virtual_network_name = module.shared_variables.vnet.name
-  address_prefixes     = [module.shared_variables.subnet.address_prefix]
+  address_prefixes     = ["10.0.1.0/24"]
 
   depends_on = [azurerm_virtual_network.vnet]
 }
