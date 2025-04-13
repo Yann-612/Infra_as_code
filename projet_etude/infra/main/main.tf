@@ -4,6 +4,8 @@ module "rg" {
   location = var.location
 }
 
+
+
 module "vnet" {
   source              = "../modules/vnet"
   resource_group_name = module.rg.name
@@ -11,6 +13,9 @@ module "vnet" {
   name                = var.vnet_name
   address_space       = var.vnet_address_space
 }
+
+
+# Creation des differents sous reseaux
 
 module "subnet_dev" {
   source               = "../modules/subnet"
@@ -42,4 +47,34 @@ module "subnet_backend" {
   address_prefixes     = ["10.0.4.0/24"]
   resource_group_name  = module.rg.name
   virtual_network_name = module.vnet.vnet_name
+}
+
+
+module "nsg_dev" {
+  source              = "../modules/nsg"
+  nsg_name            = "nsg-dev"
+  location            = var.location
+  resource_group_name = module.rg.name
+  subnet_id           = module.subnet_dev.subnet_id
+}
+
+
+module "vm_dev" {
+  source              = "../modules/compute_vm"
+  vm_name             = "vm-dev"
+  location            = var.location
+  resource_group_name = module.rg.name
+  subnet_id           = module.subnet_dev.subnet_id
+  admin_username      = "adminuser"
+  admin_ssh_key       = file(var.ssh_public_key_path)
+}
+
+output "vm_dev_name" {
+  description = "Nom de la VM de développement"
+  value       = module.vm_dev.vm_name
+}
+
+output "vm_dev_public_ip" {
+  description = "Adresse IP publique de la VM de développement"
+  value       = module.vm_dev.public_ip
 }
