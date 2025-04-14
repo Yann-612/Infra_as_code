@@ -108,7 +108,3 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
 
     - name: Debug Terraform Directory
       run: ls -la .github/workflows/terraform
-
-    - name: Set SSH Public Key
-      run: echo "TF_VAR_ssh_public_key=${{ secrets.TF_SSH_PUBLIC_KEY }}" >> $GITHUB_ENV
-
