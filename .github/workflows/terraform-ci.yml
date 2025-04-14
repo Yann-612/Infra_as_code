@@ -89,6 +89,7 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
       run: terraform plan -input=false    #L'option -input=false désactive l'invite pour les valeurs d'entrée interactives.
       working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée.
 
+    # On push to "main", build or change infrastructure
     - name: Set Terraform Environment
       run: echo "TF_VAR_some_variable=some_value" >> $GITHUB_ENV
 
