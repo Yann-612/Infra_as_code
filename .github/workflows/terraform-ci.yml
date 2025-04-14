@@ -86,7 +86,9 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan      #nom de cette étape
-      run: terraform plan -input=false    #L'option -input=false désactive l'invite pour les valeurs d'entrée interactives.
+      run: terraform plan -var="resource_group_name=my-resource-group" \
+                          -var="vm_name=my-vm" \
+                          -var="ssh_public_key=/path/to/ssh.pub"    #L'option -input=false désactive l'invite pour les valeurs d'entrée interactives.
       working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée.
 
     # On push to "main", build or change infrastructure
