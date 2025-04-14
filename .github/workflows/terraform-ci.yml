@@ -71,7 +71,11 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform      # nom de cette étape
       uses: hashicorp/setup-terraform@v1      # Utilise l'action officielle hashicorp/setup-terraform@v1. Cette action installe la dernière version de l'interface de ligne de commande (CLI) Terraform sur le runner.
+
+
       
+
+
       #: Configure les informations d'identification pour Terraform Cloud en utilisant un secret GitHub Actions nommé TF_API_TOKEN. 
       #Les secrets sont des variables d'environnement chiffrées que vous pouvez définir dans les paramètres de votre dépôt GitHub pour stocker des informations sensibles en toute sécurité.
       with:
@@ -80,14 +84,17 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init    #nom de cette étape
       run: terraform init    # Execute la commande "terraform init"
+      working-directory: .github
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format      #nom de cette étape
       run: terraform fmt -check     #Cette commande vérifie si les fichiers de configuration Terraform sont correctement formatés selon le style standard. L'option -check fait que la commande échoue si des différences de formatage sont détectées, sans les modifier.
+      working-directory: .github
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan      #nom de cette étape
       run: terraform plan -input=false    #L'option -input=false désactive l'invite pour les valeurs d'entrée interactives.
+      working-directory: .github
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
@@ -96,3 +103,4 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
       #Vérifie que l'événement qui a déclenché le workflow est un push.
       #&&: Est un opérateur logique "et", donc les deux conditions doivent être vraies pour que l'étape s'exécute.
       run: terraform apply -auto-approve -input=false    #-input=false: Désactive également l'invite pour les valeurs d'entrée interactives.
+      working-directory: .github  
