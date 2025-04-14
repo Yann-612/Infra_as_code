@@ -46,14 +46,14 @@ name: 'Terraform'      # name of the Workflow
 
 on:        #les événements GitHub qui déclencheront l'exécution de ce workflow
   push:        #Indique que le workflow sera déclenché lorsqu'il y a un push (commits) vers le dépôt.  
-    branches:  "main"       #  vers la branche nommée
+    branches:  ["main"]       #  vers la branche nommée
   pull_request:        # Indique que le workflow sera également déclenché lorsqu'une pull request est créée ou mise à jour
 
 permissions:      #Définit les permissions accordées au workflow
   contents: read
 
 jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow. Un workflow peut contenir un ou plusieurs jobs qui s'exécutent en parallèle par défaut.
-  deploiement-vm:      # le nom unique du job
+  terraform:      # le nom unique du job
     name: 'Terraform'      #Définit le nom affiché pour ce job
     runs-on: ubuntu-latest      # le runner sur lequel le job va s'executer (ici c'est un runner interne)
     environment: dev
@@ -89,8 +89,8 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
       run: terraform plan -input=false    #L'option -input=false désactive l'invite pour les valeurs d'entrée interactives.
       working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée.
 
-    - name: Set output
-      run: echo "var_name=value" >> $GITHUB_ENV
+    - name: Set Terraform Environment
+      run: echo "TF_VAR_some_variable=some_value" >> $GITHUB_ENV
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
