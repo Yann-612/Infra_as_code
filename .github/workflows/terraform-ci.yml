@@ -84,17 +84,17 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init    #nom de cette étape
       run: terraform init    # Execute la commande "terraform init"
-      working-directory: .
+      working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée. Dans ce cas, c'est le répertoire .github/workflows/terraform.
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format      #nom de cette étape
       run: terraform fmt -check     #Cette commande vérifie si les fichiers de configuration Terraform sont correctement formatés selon le style standard. L'option -check fait que la commande échoue si des différences de formatage sont détectées, sans les modifier.
-      working-directory: .
+      working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée.
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan      #nom de cette étape
       run: terraform plan -input=false    #L'option -input=false désactive l'invite pour les valeurs d'entrée interactives.
-      working-directory: .
+      working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée.
 
     - name: Set output
       run: echo "var_name=value" >> $GITHUB_ENV
@@ -107,4 +107,4 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
       #Vérifie que l'événement qui a déclenché le workflow est un push.
       #&&: Est un opérateur logique "et", donc les deux conditions doivent être vraies pour que l'étape s'exécute.
       run: terraform apply -auto-approve -input=false    #-input=false: Désactive également l'invite pour les valeurs d'entrée interactives.
-      working-directory: .
+      working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée.
