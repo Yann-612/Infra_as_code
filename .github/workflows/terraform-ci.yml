@@ -46,7 +46,7 @@ name: 'Terraform'      # name of the Workflow
 
 on:        #les événements GitHub qui déclencheront l'exécution de ce workflow
   push:        #Indique que le workflow sera déclenché lorsqu'il y a un push (commits) vers le dépôt.  
-    branches: [ "main" ]      #  vers la branche nommée
+    branches:  "main"       #  vers la branche nommée
   pull_request:        # Indique que le workflow sera également déclenché lorsqu'une pull request est créée ou mise à jour
 
 permissions:      #Définit les permissions accordées au workflow
