@@ -89,7 +89,7 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan      #nom de cette étape
-      run: terraform plan -var-file=".github/workflows/terraform/terraform.tfvars"
+      run: terraform plan -var-file="terraform.tfvars"
       working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée.
 
     # On push to "main", build or change infrastructure
@@ -109,4 +109,3 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
     - name: Debug Terraform Directory
       run: ls -la .github/workflows/terraform
 
-        
