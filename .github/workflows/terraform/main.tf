@@ -2,7 +2,7 @@
 ## Resource Group
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
-  location = var.location 
+  location = var.location
 }
 
 ## Vnet
@@ -86,12 +86,12 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg" {
 
 # VM
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                  = "${var.prefix}-vm"
-  location              = var.location
-  resource_group_name   = azurerm_resource_group.rg.name
-  size                  = "Standard_B1s"
-  admin_username        = var.admin_username
-  network_interface_ids = [azurerm_network_interface.nic.id]
+  name                            = "${var.prefix}-vm"
+  location                        = var.location
+  resource_group_name             = azurerm_resource_group.rg.name
+  size                            = "Standard_B1s"
+  admin_username                  = var.admin_username
+  network_interface_ids           = [azurerm_network_interface.nic.id]
   disable_password_authentication = true
 
   admin_ssh_key {
