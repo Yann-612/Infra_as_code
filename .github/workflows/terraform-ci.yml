@@ -84,23 +84,27 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init    #nom de cette étape
       run: terraform init    # Execute la commande "terraform init"
-      working-directory: .github
+      working-directory: .
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format      #nom de cette étape
       run: terraform fmt -check     #Cette commande vérifie si les fichiers de configuration Terraform sont correctement formatés selon le style standard. L'option -check fait que la commande échoue si des différences de formatage sont détectées, sans les modifier.
-      working-directory: .github
+      working-directory: .
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan      #nom de cette étape
       run: terraform plan -input=false    #L'option -input=false désactive l'invite pour les valeurs d'entrée interactives.
-      working-directory: .github
+      working-directory: .
+
+    - name: Set output
+      run: echo "var_name=value" >> $GITHUB_ENV
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply      #nom de cette étape
-      if: github.ref == 'refs/heads/"main"' && github.event_name == 'push' # Vérifie que la référence de l'événement (la branche ou le tag qui a déclenché le workflow) est la branche main
+      if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'  
+      #Vérifie que la référence de l'événement (la branche ou le tag qui a déclenché le workflow) est la branche main
       #Vérifie que l'événement qui a déclenché le workflow est un push.
       #&&: Est un opérateur logique "et", donc les deux conditions doivent être vraies pour que l'étape s'exécute.
       run: terraform apply -auto-approve -input=false    #-input=false: Désactive également l'invite pour les valeurs d'entrée interactives.
-      working-directory: .github  
+      working-directory: .
