@@ -67,6 +67,9 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
   
     - name: Checkout      #  nom de cette étape
       uses: actions/checkout@v4      # Utilise l'action officielle actions/checkout@v4. Cette action permet de récupérer le code du dépôt sur le runner, pour qu'il puisse travailler avec les fichiers.
+      with:
+        fetch-depth: 0      # Indique que l'historique complet du dépôt doit être récupéré. Cela est nécessaire pour certaines commandes Git qui nécessitent un historique complet, comme les commandes de fusion ou de rebase.
+      
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform      # nom de cette étape
@@ -87,8 +90,6 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
     # Generates an execution plan for Terraform
     - name: Terraform Plan      #nom de cette étape
       run: terraform plan -var-file=".github/workflows/terraform/terraform.tfvars"
-                          
-      #L'option -input=false désactive l'invite pour les valeurs d'entrée interactives.
       working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée.
 
     # On push to "main", build or change infrastructure
@@ -104,3 +105,8 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
       #&&: Est un opérateur logique "et", donc les deux conditions doivent être vraies pour que l'étape s'exécute.
       run: terraform apply -auto-approve -input=false    #-input=false: Désactive également l'invite pour les valeurs d'entrée interactives.
       working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée.
+
+    - name: Debug Terraform Directory
+      run: ls -la .github/workflows/terraform
+
+        
