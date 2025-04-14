@@ -70,7 +70,7 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform      # nom de cette étape
-      uses: hashicorp/setup-terraform@v1      # Utilise l'action officielle hashicorp/setup-terraform@v1. Cette action installe la dernière version de l'interface de ligne de commande (CLI) Terraform sur le runner.
+      uses: hashicorp/setup-terraform@v2      # Utilise l'action officielle hashicorp/setup-terraform@v1. Cette action installe la dernière version de l'interface de ligne de commande (CLI) Terraform sur le runner.
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
@@ -88,7 +88,7 @@ jobs:      # Définit les tâches (jobs) qui seront exécutées dans ce workflow
     - name: Terraform Plan      #nom de cette étape
       run: terraform plan -var="resource_group_name=my-resource-group" \
                           -var="vm_name=my-vm" \
-                          -var="ssh_public_key=/path/to/ssh.pub"    #L'option -input=false désactive l'invite pour les valeurs d'entrée interactives.
+                          -var="ssh_public_key=/path/to/ssh.pub"   #L'option -input=false désactive l'invite pour les valeurs d'entrée interactives.
       working-directory: .github/workflows/terraform    # Indique le répertoire de travail où la commande sera exécutée.
 
     # On push to "main", build or change infrastructure
