@@ -96,13 +96,14 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   admin_ssh_key {
     username   = var.admin_username
-    public_key = file(var.ssh_public_key)
+    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDQSSabUu9GyBLJWHNPf0MnA6BKtXfB5aBHrI2WkpweFsy8xcpsSjKCIU5jbiwCR9thQjBkbOoAoA11BP403Sw80yy+Rp61QPhzz88j6j4NRVbwxOdWNEXlYvdR585J5dyTHZEoOMCKiopa/eEPDYdvEp08JyBN6Y411ehBziBirvrt+wnZIjsGlvTPeyyITiNX+5wqLASGgZhLXsSIoDGALecNeT272EDxfxyVRL7vkr/txGlNHR103+sekRc8FJZfdpQ2to4rhjxC6RofIVPaRQNJEvjrYtR0oWTYME+Ojf9THgXIHTIhdH92TzScp2LclU8w9e+/pPJSKylQ2vZIanl728HjPo+DwQyrpB1FjkuMd7SRf4/Vcie7BTvDBBaqReQoCpoIrTvZuJhaa7D6vOE4X3KDrf/ouAPrxNl9rasDgzzQ1cO1DJADgrn6FC3qKB0FLh6E6t4nVMJwC7j6P1eHZuC/EnlWMgjJNSU6zswSk88PN7NhkF5VKz109x/XKnDTBKNSIsd5mFIFZhaIA7JoBMIBm/1SY3BJ4IJkL3LSKziXI2552W4tSSLgMkrgIyf8zJ0pqeKQXOy4IykqMmYf7v2BJ85ImLRgPy2IY8kdJCfyo/Dn1jNdleI8cG0qhVfeFyqzr9GNI3Zq2YUBCFGKyZElrg16U463BjMHGw== asi-cours-472@supdevinci-edu.fr"
   }
 
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
     name                 = "${var.vm_name}-osdisk"
+    disk_size_gb         = 30
   }
 
   source_image_reference {
