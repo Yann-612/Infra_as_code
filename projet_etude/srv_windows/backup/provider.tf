@@ -1,5 +1,14 @@
 # This file contains the provider configuration for AzureRM
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 3.0.0" # Replace with the latest version
+    }
+  }
+}
+
 provider "azurerm" {
   subscription_id = "ea74f97a-80cb-4d62-9ff9-04c1327d3880"
   client_id       = "5fb41f78-d49e-4369-9ee8-e166f856c461"     # AppId

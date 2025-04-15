@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "rg" {
-  name     = "my-windows-server-rg"
-  location = "East US 2" # Choisissez la région souhaitée
+  name     = "windows-server-rg"
+  location = "France Central" # Choisissez la région souhaitée
 }
 
 resource "azurerm_virtual_network" "vnet" {
@@ -15,6 +15,8 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
+
+  depends_on = [azurerm_virtual_network.vnet]
 }
 
 resource "azurerm_network_security_group" "nsg" {
@@ -51,7 +53,10 @@ resource "azurerm_public_ip" "pip" {
   name                = "windows-server-pip"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  allocation_method   = "Dynamic" # Vous pouvez choisir "Static" si vous avez besoin d'une IP publique fixe
+  allocation_method   = "Static" # Static allocation for Standard SKU
+  sku                 = "Standard" # Explicitly set the SKU to Standard
+
+  depends_on = [azurerm_resource_group.rg]
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -67,7 +72,7 @@ resource "azurerm_network_interface" "nic" {
 }
 
 resource "azurerm_windows_virtual_machine" "vm" {
-  name                = "windows-server-2022"
+  name                = "winsrv"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_DS1_v2" # Choisissez la taille de VM souhaitée
@@ -75,10 +80,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
     azurerm_network_interface.nic.id,
   ]
   admin_username        = "adminuser" # Remplacez par le nom d'utilisateur souhaité
-  admin_password        = "P@$$wOrd1234!" # Remplacez par un mot de passe sécurisé
-  provisioner "local-exec" { # Ceci est déconseillé pour la production, utilisez plutôt des extensions ou des outils de configuration
-    command = "echo 'Warning: Using local-exec with plain text password. Consider using Azure Key Vault or other secure methods for password management.' > warning.txt"
-  }
+  admin_password        = "Pa$$word1234!" # Remplacez par un mot de passe sécurisé
 
   os_disk {
     caching              = "ReadWrite"
@@ -88,7 +90,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2022-datacenter-azure-edition"
+    sku       = "2022-Datacenter"
     version   = "latest"
   }
 }
@@ -101,5 +103,9 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg_associa
 output "public_ip_address_id" {
   value = azurerm_public_ip.pip.ip_address
   description = "The public IP address of the Windows Server VM"
-  
+}
+
+output "vnet_id" {
+  value = azurerm_virtual_network.vnet.id
+  description = "The ID of the virtual network"
 }
