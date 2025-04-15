@@ -12,4 +12,4 @@ winrm set winrm/config/service/auth @{Basic="true"}
 winrm set winrm/config/service @{AllowUnencrypted="true"}
 
 # Open firewall ports for WinRM
-New-NetFirewallRule -Name "WinRM_HTTP" -DisplayName "WinRM over HTTP" -Protocol TCP -LocalPort 5985 -Action Allow
+New-NetFirewallRule -Name "WinRM_HTTP" -DisplayName "WinRM over HTTP" -enabled True -direction Inbound -Protocol TCP -LocalPort 5985 -Action Allow
