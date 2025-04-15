@@ -59,17 +59,10 @@ resource "azurerm_virtual_machine_extension" "winrm_config" {
 
   settings = <<SETTINGS
     {
-      "script": "powershell.exe -ExecutionPolicy Unrestricted -File configure_winrm.ps1"
+      "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -Command \"Set-Service -Name WinRM -StartupType Automatic; Start-Service -Name WinRM; winrm quickconfig -Force; winrm set winrm/config/service/auth @{Basic=\\\"true\\\"}; winrm set winrm/config/service @{AllowUnencrypted=\\\"true\\\"}; New-NetFirewallRule -Name \\\"WinRM_HTTP\\\" -DisplayName \\\"WinRM over HTTP\\\" -Enabled True -Direction Inbound -Protocol TCP -LocalPort 5985 -Action Allow\""
     }
   SETTINGS
-
-  protected_settings = <<PROTECTED_SETTINGS
-    {
-      "storageAccountName": "${data.azurerm_storage_account.existing_storage_account.name}",
-      "storageAccountKey": "${data.azurerm_storage_account.existing_storage_account.primary_access_key}"
-    }
-  PROTECTED_SETTINGS
-}
+} 
 
 resource "azurerm_network_interface_security_group_association" "nic_sec_group" {
   network_interface_id      = azurerm_network_interface.nic.id
@@ -141,10 +134,5 @@ resource "azurerm_public_ip" "public" {
 output "vm_public_ip" {
   value       = azurerm_public_ip.public.ip_address
   description = " The public IP adress of the virtual machine"
-}
-
-data "azurerm_storage_account" "existing_storage_account" {
-  name                = "vincistockageblob001"
-  resource_group_name = "Correct-Resource-Group-Name" # Replace with the actual resource group name
 }
 
