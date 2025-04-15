@@ -85,19 +85,17 @@ resource "azurerm_linux_virtual_machine" "Linux" {
     azurerm_network_interface.example.id,
   ]
 
-### ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+# ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 
   admin_ssh_key {
     username   = "adminuser"
     public_key = file("C:/projet/Terraform_projets/id_rsa.pub")
   }
 
-
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
-
 
   source_image_reference {
     publisher = "Canonical"
