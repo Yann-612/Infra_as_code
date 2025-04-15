@@ -1,17 +1,18 @@
-# Activer WinRM
+# This script configures Windows Remote Management (WinRM) on a Windows server.
+# It enables the WinRM service, configures a listener, and sets up firewall rules.
+# It also allows basic authentication and unencrypted traffic for testing purposes.
+
 Set-Service -Name WinRM -StartupType Automatic
 Start-Service -Name WinRM
 
-# Configurer un listener HTTPS pour WinRM
-$cert = New-SelfSignedCertificate -DnsName "your-server-name" -CertStoreLocation Cert:\LocalMachine\My
-$thumbprint = $cert.Thumbprint
-New-Item -Path WSMan:\Localhost\Service\CertificateThumbprint -Value $thumbprint
+# Configure WinRM listener
+winrm quickconfig -Force
 
-# Configurer le listener HTTPS
-winrm create winrm/config/Listener?Address=*+Transport=HTTPS @{Hostname="your-server-name"; CertificateThumbprint="$thumbprint"}
-
-# Activer l'authentification par mot de passe
+# Allow basic authentication
 winrm set winrm/config/service/auth @{Basic="true"}
 
-# Ouvrir les ports nécessaires pour WinRM
-New-NetFirewallRule -Name "WinRM_HTTPS" -DisplayName "WinRM over HTTPS" -Protocol TCP -LocalPort 5986 -Action Allow
+# Allow unencrypted traffic (optional, for testing purposes)
+winrm set winrm/config/service @{AllowUnencrypted="true"}
+
+# Open firewall ports for WinRM
+New-NetFirewallRule -Name "WinRM_HTTP" -DisplayName "WinRM over HTTP" -enabled True -direction Inbound -Protocol TCP -LocalPort 5985 -Action Allow

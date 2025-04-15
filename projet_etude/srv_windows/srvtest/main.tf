@@ -77,16 +77,11 @@ resource "azurerm_virtual_machine_extension" "winrm_config" {
 
   settings = <<SETTINGS
     {
-      "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File C:\\path\\to\\configure_winrm.ps1"
+      "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -Command \"Set-Service -Name WinRM -StartupType Automatic; Start-Service -Name WinRM; winrm quickconfig -Force; winrm set winrm/config/service/auth @{Basic=\\\"true\\\"}; winrm set winrm/config/service @{AllowUnencrypted=\\\"true\\\"}; New-NetFirewallRule -Name \\\"WinRM_HTTP\\\" -DisplayName \\\"WinRM over HTTP\\\" -Enabled True -Direction Inbound -Protocol TCP -LocalPort 5985 -Action Allow\""
     }
   SETTINGS
+} 
 
-  protected_settings = <<PROTECTED_SETTINGS
-    {
-      "fileUris": ["https://<storage-account-name>.blob.core.windows.net/<container-name>/configure_winrm.ps1?<sas-token>"]
-    }
-  PROTECTED_SETTINGS
-}
 
 output "vm_id" {
   value = azurerm_windows_virtual_machine.srv.id
