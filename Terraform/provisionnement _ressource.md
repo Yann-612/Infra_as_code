@@ -1,7 +1,8 @@
 # Terraform-Vrac
-# Provisionnement Azure
 
-# Main.tf
+## Provisionnement Azure
+
+### Main.tf
 
 resource "azurerm_resource_group" "ressource" {
   name     = "gsu_grp_ressource"
@@ -37,7 +38,6 @@ security_rule {
     destination_address_prefix = "*"
   }
 
-
 }
 
 resource "azurerm_network_interface_security_group_association" "example" {
@@ -65,7 +65,6 @@ resource "azurerm_network_interface" "example" {
   location            = azurerm_resource_group.ressource.location
   resource_group_name = azurerm_resource_group.ressource.name
 
-
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet1.id
@@ -73,7 +72,6 @@ resource "azurerm_network_interface" "example" {
     public_ip_address_id          = azurerm_public_ip.example.id
   }
 }
-
 
 resource "azurerm_linux_virtual_machine" "Linux" {
   name                = "Ubuntu-24.04"
@@ -85,7 +83,7 @@ resource "azurerm_linux_virtual_machine" "Linux" {
     azurerm_network_interface.example.id,
   ]
 
-# ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+//ssh-keygen -t rsa -b 4096 -C "<your_email@example.com>"
 
   admin_ssh_key {
     username   = "adminuser"
