@@ -1,0 +1,806 @@
+2025-04-19 17:47:37,726 p=15088 u=yannick n=ansible | [WARNING]: Could not match supplied host pattern, ignoring: ad_servers
+
+2025-04-19 17:47:37,727 p=15088 u=yannick n=ansible | PLAY [Installer Active Directory Domain Services (AD DS)] ************************************************************************
+2025-04-19 17:47:37,728 p=15088 u=yannick n=ansible | skipping: no hosts matched
+2025-04-19 17:47:37,728 p=15088 u=yannick n=ansible | PLAY RECAP ***********************************************************************************************************************
+2025-04-19 17:48:20,908 p=15093 u=yannick n=ansible | PLAY [Installer Active Directory Domain Services (AD DS)] ************************************************************************
+2025-04-19 17:48:20,921 p=15093 u=yannick n=ansible | TASK [Gathering Facts] ***********************************************************************************************************
+2025-04-19 17:48:42,029 p=15093 u=yannick n=ansible | fatal: [40.89.179.90]: UNREACHABLE! => {"changed": false, "msg": "basic: HTTPSConnectionPool(host='40.89.179.90', port=5986): Max retries exceeded with url: /wsman (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f9236b78bb0>: Failed to establish a new connection: [Errno 111] Connection refused'))", "unreachable": true}
+2025-04-19 17:48:42,032 p=15093 u=yannick n=ansible | PLAY RECAP ***********************************************************************************************************************
+2025-04-19 17:48:42,033 p=15093 u=yannick n=ansible | 40.89.179.90               : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+2025-04-19 17:53:11,794 p=15118 u=yannick n=ansible | PLAY [Installer Active Directory Domain Services (AD DS)] **********************************************************************************************************************************
+2025-04-19 17:53:11,806 p=15118 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 17:53:21,670 p=15118 u=yannick n=ansible | ok: [40.89.179.90]
+2025-04-19 17:53:21,680 p=15118 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 17:54:20,030 p=15118 u=yannick n=ansible | changed: [40.89.179.90]
+2025-04-19 17:54:20,037 p=15118 u=yannick n=ansible | TASK [Installer la fonctionnalité AD DS] ***************************************************************************************************************************************************
+2025-04-19 17:54:20,094 p=15118 u=yannick n=ansible | skipping: [40.89.179.90]
+2025-04-19 17:54:20,101 p=15118 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 17:54:20,144 p=15118 u=yannick n=ansible | skipping: [40.89.179.90]
+2025-04-19 17:54:20,156 p=15118 u=yannick n=ansible | TASK [Redémarrer le serveur après l'installation d'AD DS] **********************************************************************************************************************************
+2025-04-19 17:54:20,196 p=15118 u=yannick n=ansible | skipping: [40.89.179.90]
+2025-04-19 17:54:20,209 p=15118 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 17:54:20,209 p=15118 u=yannick n=ansible | 40.89.179.90               : ok=2    changed=1    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0   
+2025-04-19 18:16:57,710 p=15342 u=yannick n=ansible | [WARNING]: Could not match supplied host pattern, ignoring: windows
+
+2025-04-19 18:16:57,711 p=15342 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 18:16:57,712 p=15342 u=yannick n=ansible | skipping: no hosts matched
+2025-04-19 18:16:57,713 p=15342 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 18:17:18,163 p=15347 u=yannick n=ansible | [WARNING]: Could not match supplied host pattern, ignoring: windows
+
+2025-04-19 18:17:18,164 p=15347 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 18:17:18,164 p=15347 u=yannick n=ansible | skipping: no hosts matched
+2025-04-19 18:17:18,165 p=15347 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 18:18:30,164 p=15403 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 18:18:30,176 p=15403 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 18:18:59,968 p=15403 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"ansible_facts": {}, "changed": false, "failed_modules": {"ansible.legacy.setup": {"exception": "Exception calling \"CreateProcessAsUser\" with \"9\" argument(s): \"Some or all identity references could not be translated.\"\r\nAt line:103 char:5\r\n+     $result = [Ansible.Become.BecomeUtil]::CreateProcessAsUser($usern ...\r\n+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [], MethodInvocationException\r\n    + FullyQualifiedErrorId : IdentityNotMappedException\r\n\r\nScriptStackTrace:\r\nat <ScriptBlock>, <No file>: line 103\r\nat <ScriptBlock><End>, <No file>: line 137\r\nat <ScriptBlock>, <No file>: line 11\r\n\r\nSystem.Management.Automation.MethodInvocationException: Exception calling \"CreateProcessAsUser\" with \"9\" argument(s): \"Some or all identity references could not be translated.\" ---> System.Security.Principal.IdentityNotMappedException: Some or all identity references could not be translated.\r\n   at System.Security.Principal.NTAccount.Translate(IdentityReferenceCollection sourceAccounts, Type targetType, Boolean forceSuccess)\r\n   at System.Security.Principal.NTAccount.Translate(Type targetType)\r\n   at Ansible.Become.BecomeUtil.GetUserTokens(String username, String password, LogonType logonType) in c:\\Users\\adminuser\\AppData\\Local\\Temp\\0em1lp2d.1.cs:line 335\r\n   at Ansible.Become.BecomeUtil.CreateProcessAsUser(String username, String password, LogonFlags logonFlags, LogonType logonType, String lpApplicationName, String lpCommandLine, String lpCurrentDirectory, IDictionary environment, Byte[] stdin) in c:\\Users\\adminuser\\AppData\\Local\\Temp\\0em1lp2d.1.cs:line 288\r\n   at CallSite.Target(Closure , CallSite , Type , Object , Object , Object , Object , Object , Object , Object , Object , Object )\r\n   --- End of inner exception stack trace ---\r\n   at System.Management.Automation.ExceptionHandlingOps.CheckActionPreference(FunctionContext funcContext, Exception exception)\r\n   at System.Management.Automation.Interpreter.ActionCallInstruction`2.Run(InterpretedFrame frame)\r\n   at System.Management.Automation.Interpreter.EnterTryCatchFinallyInstruction.Run(InterpretedFrame frame)\r\n   at System.Management.Automation.Interpreter.EnterTryCatchFinallyInstruction.Run(InterpretedFrame frame)", "failed": true, "msg": "internal error: failed to become user 'Administrator  # Utilisateur pour les privilèges élevés': Exception calling \"CreateProcessAsUser\" with \"9\" argument(s): \"Some or all identity references could not be translated.\""}}, "msg": "The following modules failed to execute: ansible.legacy.setup\n"}
+2025-04-19 18:18:59,972 p=15403 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 18:18:59,972 p=15403 u=yannick n=ansible | 52.143.138.93              : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 18:21:07,551 p=15418 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 18:21:07,565 p=15418 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 18:21:11,149 p=15418 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"ansible_facts": {}, "changed": false, "failed_modules": {"ansible.legacy.setup": {"exception": "Exception calling \"CreateProcessAsUser\" with \"9\" argument(s): \"Some or all identity references could not be translated.\"\r\nAt line:103 char:5\r\n+     $result = [Ansible.Become.BecomeUtil]::CreateProcessAsUser($usern ...\r\n+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [], MethodInvocationException\r\n    + FullyQualifiedErrorId : IdentityNotMappedException\r\n\r\nScriptStackTrace:\r\nat <ScriptBlock>, <No file>: line 103\r\nat <ScriptBlock><End>, <No file>: line 137\r\nat <ScriptBlock>, <No file>: line 11\r\n\r\nSystem.Management.Automation.MethodInvocationException: Exception calling \"CreateProcessAsUser\" with \"9\" argument(s): \"Some or all identity references could not be translated.\" ---> System.Security.Principal.IdentityNotMappedException: Some or all identity references could not be translated.\r\n   at System.Security.Principal.NTAccount.Translate(IdentityReferenceCollection sourceAccounts, Type targetType, Boolean forceSuccess)\r\n   at System.Security.Principal.NTAccount.Translate(Type targetType)\r\n   at Ansible.Become.BecomeUtil.GetUserTokens(String username, String password, LogonType logonType) in c:\\Users\\adminuser\\AppData\\Local\\Temp\\ydy2q3fd.1.cs:line 335\r\n   at Ansible.Become.BecomeUtil.CreateProcessAsUser(String username, String password, LogonFlags logonFlags, LogonType logonType, String lpApplicationName, String lpCommandLine, String lpCurrentDirectory, IDictionary environment, Byte[] stdin) in c:\\Users\\adminuser\\AppData\\Local\\Temp\\ydy2q3fd.1.cs:line 288\r\n   at CallSite.Target(Closure , CallSite , Type , Object , Object , Object , Object , Object , Object , Object , Object , Object )\r\n   --- End of inner exception stack trace ---\r\n   at System.Management.Automation.ExceptionHandlingOps.CheckActionPreference(FunctionContext funcContext, Exception exception)\r\n   at System.Management.Automation.Interpreter.ActionCallInstruction`2.Run(InterpretedFrame frame)\r\n   at System.Management.Automation.Interpreter.EnterTryCatchFinallyInstruction.Run(InterpretedFrame frame)\r\n   at System.Management.Automation.Interpreter.EnterTryCatchFinallyInstruction.Run(InterpretedFrame frame)", "failed": true, "msg": "internal error: failed to become user 'adminuser  # Utilisateur pour les privilèges élevés': Exception calling \"CreateProcessAsUser\" with \"9\" argument(s): \"Some or all identity references could not be translated.\""}}, "msg": "The following modules failed to execute: ansible.legacy.setup\n"}
+2025-04-19 18:21:11,152 p=15418 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 18:21:11,152 p=15418 u=yannick n=ansible | 52.143.138.93              : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 18:25:22,430 p=15428 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 18:25:22,442 p=15428 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 18:25:43,539 p=15428 u=yannick n=ansible | fatal: [52.143.138.93]: UNREACHABLE! => {"changed": false, "msg": "basic: HTTPSConnectionPool(host='52.143.138.93', port=5986): Max retries exceeded with url: /wsman (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7fb563c48970>: Failed to establish a new connection: [Errno 111] Connection refused'))", "unreachable": true}
+2025-04-19 18:25:43,542 p=15428 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 18:25:43,543 p=15428 u=yannick n=ansible | 52.143.138.93              : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+2025-04-19 18:27:59,258 p=15438 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 18:27:59,273 p=15438 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 18:28:01,916 p=15438 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"ansible_facts": {}, "changed": false, "failed_modules": {"ansible.legacy.setup": {"exception": "Exception calling \"CreateProcessAsUser\" with \"9\" argument(s): \"Some or all identity references could not be translated.\"\r\nAt line:103 char:5\r\n+     $result = [Ansible.Become.BecomeUtil]::CreateProcessAsUser($usern ...\r\n+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [], MethodInvocationException\r\n    + FullyQualifiedErrorId : IdentityNotMappedException\r\n\r\nScriptStackTrace:\r\nat <ScriptBlock>, <No file>: line 103\r\nat <ScriptBlock><End>, <No file>: line 137\r\nat <ScriptBlock>, <No file>: line 11\r\n\r\nSystem.Management.Automation.MethodInvocationException: Exception calling \"CreateProcessAsUser\" with \"9\" argument(s): \"Some or all identity references could not be translated.\" ---> System.Security.Principal.IdentityNotMappedException: Some or all identity references could not be translated.\r\n   at System.Security.Principal.NTAccount.Translate(IdentityReferenceCollection sourceAccounts, Type targetType, Boolean forceSuccess)\r\n   at System.Security.Principal.NTAccount.Translate(Type targetType)\r\n   at Ansible.Become.BecomeUtil.GetUserTokens(String username, String password, LogonType logonType) in c:\\Users\\adminuser\\AppData\\Local\\Temp\\25lgtbct.1.cs:line 335\r\n   at Ansible.Become.BecomeUtil.CreateProcessAsUser(String username, String password, LogonFlags logonFlags, LogonType logonType, String lpApplicationName, String lpCommandLine, String lpCurrentDirectory, IDictionary environment, Byte[] stdin) in c:\\Users\\adminuser\\AppData\\Local\\Temp\\25lgtbct.1.cs:line 288\r\n   at CallSite.Target(Closure , CallSite , Type , Object , Object , Object , Object , Object , Object , Object , Object , Object )\r\n   --- End of inner exception stack trace ---\r\n   at System.Management.Automation.ExceptionHandlingOps.CheckActionPreference(FunctionContext funcContext, Exception exception)\r\n   at System.Management.Automation.Interpreter.ActionCallInstruction`2.Run(InterpretedFrame frame)\r\n   at System.Management.Automation.Interpreter.EnterTryCatchFinallyInstruction.Run(InterpretedFrame frame)\r\n   at System.Management.Automation.Interpreter.EnterTryCatchFinallyInstruction.Run(InterpretedFrame frame)", "failed": true, "msg": "internal error: failed to become user 'adminuser  # Utilisateur pour les privilèges élevés': Exception calling \"CreateProcessAsUser\" with \"9\" argument(s): \"Some or all identity references could not be translated.\""}}, "msg": "The following modules failed to execute: ansible.legacy.setup\n"}
+2025-04-19 18:28:01,918 p=15438 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 18:28:01,919 p=15438 u=yannick n=ansible | 52.143.138.93              : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 18:29:37,428 p=15447 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 18:29:37,441 p=15447 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 18:29:37,464 p=15447 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"msg": "No setting was provided for required configuration plugin_type: become plugin: runas setting: become_user "}
+2025-04-19 18:29:37,466 p=15447 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 18:29:37,467 p=15447 u=yannick n=ansible | 52.143.138.93              : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 18:33:11,359 p=15504 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 18:33:11,372 p=15504 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 18:33:20,258 p=15504 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 18:33:20,267 p=15504 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 18:34:33,424 p=15504 u=yannick n=ansible | changed: [52.143.138.93]
+2025-04-19 18:34:33,433 p=15504 u=yannick n=ansible | TASK [Installer la fonctionnalité AD DS] ***************************************************************************************************************************************************
+2025-04-19 18:34:33,474 p=15504 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"msg": "The conditional check 'not ad_feature_status.installed' failed. The error was: error while evaluating conditional (not ad_feature_status.installed): 'dict object' has no attribute 'installed'\n\nThe error appears to be in '/home/yannick/Infra_as_code/projet_etude/srv_windows/test1/install_ad.yml': line 18, column 7, but may\nbe elsewhere in the file depending on the exact syntax problem.\n\nThe offending line appears to be:\n\n\n    - name: Installer la fonctionnalité AD DS\n      ^ here\n"}
+2025-04-19 18:34:33,478 p=15504 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 18:34:33,478 p=15504 u=yannick n=ansible | 52.143.138.93              : ok=2    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 18:38:33,321 p=15520 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 18:38:33,332 p=15520 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 18:38:39,900 p=15520 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 18:38:39,911 p=15520 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 18:38:44,086 p=15520 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 18:38:44,092 p=15520 u=yannick n=ansible | TASK [Installer la fonctionnalité AD DS] ***************************************************************************************************************************************************
+2025-04-19 18:38:47,959 p=15520 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 18:38:47,965 p=15520 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 18:38:48,007 p=15520 u=yannick n=ansible | skipping: [52.143.138.93]
+2025-04-19 18:38:48,014 p=15520 u=yannick n=ansible | TASK [Redémarrer le serveur après la promotion en contrôleur de domaine] *******************************************************************************************************************
+2025-04-19 18:38:48,049 p=15520 u=yannick n=ansible | skipping: [52.143.138.93]
+2025-04-19 18:38:48,061 p=15520 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 18:38:48,062 p=15520 u=yannick n=ansible | 52.143.138.93              : ok=3    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+2025-04-19 18:51:18,490 p=15545 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 18:51:18,502 p=15545 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 19:31:35,399 p=15545 u=yannick n=ansible |  [ERROR]: User interrupted execution
+
+2025-04-19 19:31:41,493 p=15555 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 19:31:41,507 p=15555 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 19:35:42,551 p=15555 u=yannick n=ansible | An exception occurred during task execution. To see the full traceback, use -vvv. The error was: requests.exceptions.ConnectionError: HTTPConnectionPool(host='52.143.138.93', port=5985): Max retries exceeded with url: /wsman (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd2bb9fc640>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2025-04-19 19:35:42,552 p=15555 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"msg": "Unexpected failure during module execution.", "stdout": ""}
+2025-04-19 19:35:42,554 p=15555 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 19:35:42,555 p=15555 u=yannick n=ansible | 52.143.138.93              : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 19:40:40,812 p=15568 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 19:40:40,825 p=15568 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 19:40:50,372 p=15568 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:40:50,383 p=15568 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 19:40:54,872 p=15568 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:40:54,881 p=15568 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 19:40:54,932 p=15568 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 19:40:54,940 p=15568 u=yannick n=ansible | TASK [Installer la fonctionnalité AD DS] ***************************************************************************************************************************************************
+2025-04-19 19:40:58,768 p=15568 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:40:58,776 p=15568 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 19:40:58,820 p=15568 u=yannick n=ansible | skipping: [52.143.138.93]
+2025-04-19 19:40:58,828 p=15568 u=yannick n=ansible | TASK [Redémarrer le serveur après la promotion en contrôleur de domaine] *******************************************************************************************************************
+2025-04-19 19:40:58,876 p=15568 u=yannick n=ansible | skipping: [52.143.138.93]
+2025-04-19 19:40:58,886 p=15568 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 19:40:58,886 p=15568 u=yannick n=ansible | 52.143.138.93              : ok=4    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+2025-04-19 19:45:11,156 p=15585 u=yannick n=ansible | 52.143.138.93 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+2025-04-19 19:48:05,315 p=15596 u=yannick n=ansible | 52.143.138.93 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+2025-04-19 19:48:16,370 p=15601 u=yannick n=ansible | ERROR! conflicting action statements: debug, var
+
+The error appears to be in '/home/yannick/Infra_as_code/projet_etude/srv_windows/test1/install_ad.yml': line 42, column 7, but may
+be elsewhere in the file depending on the exact syntax problem.
+
+The offending line appears to be:
+
+
+    - name: Afficher le statut de la fonctionnalité AD DS
+      ^ here
+
+2025-04-19 19:49:33,960 p=15606 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 19:49:33,973 p=15606 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 19:49:40,135 p=15606 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:49:40,147 p=15606 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 19:49:44,011 p=15606 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:49:44,019 p=15606 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 19:49:44,068 p=15606 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 19:49:44,074 p=15606 u=yannick n=ansible | TASK [Installer la fonctionnalité AD DS] ***************************************************************************************************************************************************
+2025-04-19 19:49:47,873 p=15606 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:49:47,881 p=15606 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 19:49:47,929 p=15606 u=yannick n=ansible | skipping: [52.143.138.93]
+2025-04-19 19:49:47,937 p=15606 u=yannick n=ansible | TASK [Redémarrer le serveur après la promotion en contrôleur de domaine] *******************************************************************************************************************
+2025-04-19 19:49:47,980 p=15606 u=yannick n=ansible | skipping: [52.143.138.93]
+2025-04-19 19:49:47,988 p=15606 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 19:49:48,030 p=15606 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 19:49:48,037 p=15606 u=yannick n=ansible | TASK [Afficher le statut de la promotion en contrôleur de domaine] *************************************************************************************************************************
+2025-04-19 19:49:48,083 p=15606 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "domain_status": {
+        "changed": false,
+        "skip_reason": "Conditional result was False",
+        "skipped": true
+    }
+}
+2025-04-19 19:49:48,100 p=15606 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 19:49:48,100 p=15606 u=yannick n=ansible | 52.143.138.93              : ok=6    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+2025-04-19 19:53:40,729 p=15631 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 19:53:40,742 p=15631 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 19:53:46,916 p=15631 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:53:46,926 p=15631 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 19:53:50,743 p=15631 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:53:50,751 p=15631 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 19:53:50,804 p=15631 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 19:53:50,811 p=15631 u=yannick n=ansible | TASK [Installer la fonctionnalité AD DS] ***************************************************************************************************************************************************
+2025-04-19 19:53:54,550 p=15631 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:53:54,558 p=15631 u=yannick n=ansible | TASK [Vérifier si le serveur est déjà un contrôleur de domaine] ****************************************************************************************************************************
+2025-04-19 19:53:59,512 p=15631 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"changed": true, "cmd": "(Get-ADDomainController).Name", "delta": "0:00:01.109327", "end": "2025-04-19 07:53:59.252927", "msg": "non-zero return code", "rc": 1, "start": "2025-04-19 07:53:58.143599", "stderr": "Get-ADDomainController : Unable to find a default server with Active Directory Web Services \r\nrunning.\r\nAt line:1 char:66\r\n+ ...  = New-Object Text.UTF8Encoding $false; (Get-ADDomainController).Name\r\n+                                              ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : ResourceUnavailable: (:) [Get-ADDomainController], ADServerDownExcep \r\n   tion\r\n    + FullyQualifiedErrorId : ActiveDirectoryServer:1355,Microsoft.ActiveDirectory.Management.Comm \r\n   ands.GetADDomainController", "stderr_lines": ["Get-ADDomainController : Unable to find a default server with Active Directory Web Services ", "running.", "At line:1 char:66", "+ ...  = New-Object Text.UTF8Encoding $false; (Get-ADDomainController).Name", "+                                              ~~~~~~~~~~~~~~~~~~~~~~", "    + CategoryInfo          : ResourceUnavailable: (:) [Get-ADDomainController], ADServerDownExcep ", "   tion", "    + FullyQualifiedErrorId : ActiveDirectoryServer:1355,Microsoft.ActiveDirectory.Management.Comm ", "   ands.GetADDomainController"], "stdout": "", "stdout_lines": []}
+2025-04-19 19:53:59,512 p=15631 u=yannick n=ansible | ...ignoring
+2025-04-19 19:53:59,520 p=15631 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 19:53:59,570 p=15631 u=yannick n=ansible | skipping: [52.143.138.93]
+2025-04-19 19:53:59,579 p=15631 u=yannick n=ansible | TASK [Redémarrer le serveur après la promotion en contrôleur de domaine] *******************************************************************************************************************
+2025-04-19 19:53:59,624 p=15631 u=yannick n=ansible | skipping: [52.143.138.93]
+2025-04-19 19:53:59,633 p=15631 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 19:53:59,680 p=15631 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 19:53:59,687 p=15631 u=yannick n=ansible | TASK [Afficher le statut de la promotion en contrôleur de domaine] *************************************************************************************************************************
+2025-04-19 19:53:59,735 p=15631 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "domain_status": {
+        "changed": false,
+        "skip_reason": "Conditional result was False",
+        "skipped": true
+    }
+}
+2025-04-19 19:53:59,748 p=15631 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 19:53:59,749 p=15631 u=yannick n=ansible | 52.143.138.93              : ok=7    changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=1   
+2025-04-19 19:57:39,151 p=15659 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 19:57:39,163 p=15659 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 19:57:45,607 p=15659 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:57:45,618 p=15659 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 19:57:49,672 p=15659 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 19:57:49,679 p=15659 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 19:57:49,723 p=15659 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 19:57:49,730 p=15659 u=yannick n=ansible | TASK [Vérifier si le rôle AD DS est installé] **********************************************************************************************************************************************
+2025-04-19 19:57:57,052 p=15659 u=yannick n=ansible | changed: [52.143.138.93]
+2025-04-19 19:57:57,060 p=15659 u=yannick n=ansible | TASK [Afficher le statut du rôle AD DS] ****************************************************************************************************************************************************
+2025-04-19 19:57:57,113 p=15659 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_role_status": {
+        "changed": true,
+        "cmd": "(Get-WindowsFeature -Name AD-Domain-Services).Installed",
+        "delta": "0:00:03.457424",
+        "end": "2025-04-19 07:57:56.801695",
+        "failed": false,
+        "rc": 0,
+        "start": "2025-04-19 07:57:53.344271",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "True\r\n",
+        "stdout_lines": [
+            "True"
+        ]
+    }
+}
+2025-04-19 19:57:57,120 p=15659 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 19:58:00,465 p=15659 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"changed": false, "msg": "Get-AnsibleParam: Missing required argument: dns_domain_name"}
+2025-04-19 19:58:00,467 p=15659 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 19:58:00,468 p=15659 u=yannick n=ansible | 52.143.138.93              : ok=5    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 20:00:42,243 p=15678 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 20:00:42,256 p=15678 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 20:00:49,001 p=15678 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 20:00:49,011 p=15678 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 20:00:53,297 p=15678 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 20:00:53,304 p=15678 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 20:00:53,353 p=15678 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 20:00:53,360 p=15678 u=yannick n=ansible | TASK [Vérifier si le rôle AD DS est installé] **********************************************************************************************************************************************
+2025-04-19 20:00:59,459 p=15678 u=yannick n=ansible | changed: [52.143.138.93]
+2025-04-19 20:00:59,467 p=15678 u=yannick n=ansible | TASK [Afficher le statut du rôle AD DS] ****************************************************************************************************************************************************
+2025-04-19 20:00:59,515 p=15678 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_role_status": {
+        "changed": true,
+        "cmd": "(Get-WindowsFeature -Name AD-Domain-Services).Installed",
+        "delta": "0:00:02.046856",
+        "end": "2025-04-19 08:00:59.200750",
+        "failed": false,
+        "rc": 0,
+        "start": "2025-04-19 08:00:57.153894",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "True\r\n",
+        "stdout_lines": [
+            "True"
+        ]
+    }
+}
+2025-04-19 20:00:59,521 p=15678 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 20:01:02,862 p=15678 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"changed": false, "msg": "Get-AnsibleParam: Missing required argument: safe_mode_password"}
+2025-04-19 20:01:02,864 p=15678 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 20:01:02,865 p=15678 u=yannick n=ansible | 52.143.138.93              : ok=5    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 20:04:41,341 p=15699 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 20:04:41,354 p=15699 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 20:04:47,572 p=15699 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 20:04:47,582 p=15699 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 20:04:51,520 p=15699 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 20:04:51,528 p=15699 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 20:04:51,576 p=15699 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 20:04:51,584 p=15699 u=yannick n=ansible | TASK [Vérifier si le rôle AD DS est installé] **********************************************************************************************************************************************
+2025-04-19 20:04:57,360 p=15699 u=yannick n=ansible | changed: [52.143.138.93]
+2025-04-19 20:04:57,366 p=15699 u=yannick n=ansible | TASK [Afficher le statut du rôle AD DS] ****************************************************************************************************************************************************
+2025-04-19 20:04:57,415 p=15699 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_role_status": {
+        "changed": true,
+        "cmd": "(Get-WindowsFeature -Name AD-Domain-Services).Installed",
+        "delta": "0:00:02.078167",
+        "end": "2025-04-19 08:04:57.117779",
+        "failed": false,
+        "rc": 0,
+        "start": "2025-04-19 08:04:55.039612",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "True\r\n",
+        "stdout_lines": [
+            "True"
+        ]
+    }
+}
+2025-04-19 20:04:57,422 p=15699 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 20:05:00,728 p=15699 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"changed": false, "msg": "Get-AnsibleParam: Missing required argument: safe_mode_password"}
+2025-04-19 20:05:00,731 p=15699 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 20:05:00,732 p=15699 u=yannick n=ansible | 52.143.138.93              : ok=5    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 20:07:03,764 p=15718 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 20:07:03,776 p=15718 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 20:07:09,932 p=15718 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 20:07:09,944 p=15718 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 20:07:13,870 p=15718 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 20:07:13,877 p=15718 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 20:07:13,925 p=15718 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 20:07:13,930 p=15718 u=yannick n=ansible | TASK [Vérifier si le rôle AD DS est installé] **********************************************************************************************************************************************
+2025-04-19 20:07:19,623 p=15718 u=yannick n=ansible | changed: [52.143.138.93]
+2025-04-19 20:07:19,628 p=15718 u=yannick n=ansible | TASK [Afficher le statut du rôle AD DS] ****************************************************************************************************************************************************
+2025-04-19 20:07:19,669 p=15718 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_role_status": {
+        "changed": true,
+        "cmd": "(Get-WindowsFeature -Name AD-Domain-Services).Installed",
+        "delta": "0:00:01.937479",
+        "end": "2025-04-19 08:07:19.383133",
+        "failed": false,
+        "rc": 0,
+        "start": "2025-04-19 08:07:17.445653",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "True\r\n",
+        "stdout_lines": [
+            "True"
+        ]
+    }
+}
+2025-04-19 20:07:19,674 p=15718 u=yannick n=ansible | TASK [Vérifier la valeur de safe_mode_password] ********************************************************************************************************************************************
+2025-04-19 20:07:19,710 p=15718 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "safe_mode_password": "Pa$$word1234!"
+}
+2025-04-19 20:07:19,719 p=15718 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 20:07:22,999 p=15718 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"changed": false, "msg": "Get-AnsibleParam: Missing required argument: safe_mode_password"}
+2025-04-19 20:07:23,002 p=15718 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 20:07:23,003 p=15718 u=yannick n=ansible | 52.143.138.93              : ok=6    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 20:10:10,995 p=15742 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 20:10:11,009 p=15742 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 20:10:18,398 p=15742 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 20:10:18,408 p=15742 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 20:10:23,026 p=15742 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 20:10:23,032 p=15742 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 20:10:23,081 p=15742 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 20:10:23,087 p=15742 u=yannick n=ansible | TASK [Vérifier si le rôle AD DS est installé] **********************************************************************************************************************************************
+2025-04-19 20:10:30,842 p=15742 u=yannick n=ansible | changed: [52.143.138.93]
+2025-04-19 20:10:30,850 p=15742 u=yannick n=ansible | TASK [Afficher le statut du rôle AD DS] ****************************************************************************************************************************************************
+2025-04-19 20:10:30,894 p=15742 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_role_status": {
+        "changed": true,
+        "cmd": "(Get-WindowsFeature -Name AD-Domain-Services).Installed",
+        "delta": "0:00:02.718706",
+        "end": "2025-04-19 08:10:30.570571",
+        "failed": false,
+        "rc": 0,
+        "start": "2025-04-19 08:10:27.851865",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "True\r\n",
+        "stdout_lines": [
+            "True"
+        ]
+    }
+}
+2025-04-19 20:10:30,902 p=15742 u=yannick n=ansible | TASK [Vérifier la valeur de safe_mode_password] ********************************************************************************************************************************************
+2025-04-19 20:10:30,938 p=15742 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "safe_mode_password": "Pa$$word1234!"
+}
+2025-04-19 20:10:30,945 p=15742 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 20:10:34,803 p=15742 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"changed": false, "msg": "Get-AnsibleParam: Missing required argument: safe_mode_password"}
+2025-04-19 20:10:34,806 p=15742 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 20:10:34,807 p=15742 u=yannick n=ansible | 52.143.138.93              : ok=6    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 20:13:09,878 p=15764 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 20:13:09,892 p=15764 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 20:13:16,182 p=15764 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 20:13:16,192 p=15764 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 20:13:20,072 p=15764 u=yannick n=ansible | ok: [52.143.138.93]
+2025-04-19 20:13:20,080 p=15764 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 20:13:20,127 p=15764 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 20:13:20,134 p=15764 u=yannick n=ansible | TASK [Vérifier si le rôle AD DS est installé] **********************************************************************************************************************************************
+2025-04-19 20:13:26,166 p=15764 u=yannick n=ansible | changed: [52.143.138.93]
+2025-04-19 20:13:26,173 p=15764 u=yannick n=ansible | TASK [Afficher le statut du rôle AD DS] ****************************************************************************************************************************************************
+2025-04-19 20:13:26,213 p=15764 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "ad_role_status": {
+        "changed": true,
+        "cmd": "(Get-WindowsFeature -Name AD-Domain-Services).Installed",
+        "delta": "0:00:02.156321",
+        "end": "2025-04-19 08:13:25.898379",
+        "failed": false,
+        "rc": 0,
+        "start": "2025-04-19 08:13:23.742058",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "True\r\n",
+        "stdout_lines": [
+            "True"
+        ]
+    }
+}
+2025-04-19 20:13:26,221 p=15764 u=yannick n=ansible | TASK [Vérifier la valeur de safe_mode_password] ********************************************************************************************************************************************
+2025-04-19 20:13:26,267 p=15764 u=yannick n=ansible | ok: [52.143.138.93] => {
+    "safe_mode_password": "Pa$$word1234!"
+}
+2025-04-19 20:13:26,274 p=15764 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 20:13:29,552 p=15764 u=yannick n=ansible | fatal: [52.143.138.93]: FAILED! => {"changed": false, "msg": "Get-AnsibleParam: Missing required argument: safe_mode_password"}
+2025-04-19 20:13:29,555 p=15764 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 20:13:29,556 p=15764 u=yannick n=ansible | 52.143.138.93              : ok=6    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 20:22:42,856 p=15975 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] ********************************************************************************************************************
+2025-04-19 20:22:42,869 p=15975 u=yannick n=ansible | TASK [Gathering Facts] *********************************************************************************************************************************************************************
+2025-04-19 20:23:00,135 p=15975 u=yannick n=ansible | ok: [4.178.184.158]
+2025-04-19 20:23:00,148 p=15975 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ******************************************************************************************************************************
+2025-04-19 20:24:48,867 p=15975 u=yannick n=ansible | changed: [4.178.184.158]
+2025-04-19 20:24:48,875 p=15975 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] ***************************************************************************************************************************************
+2025-04-19 20:24:48,926 p=15975 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "ad_feature_status": {
+        "changed": true,
+        "exitcode": "Success",
+        "failed": false,
+        "feature_result": [
+            {
+                "display_name": "Active Directory Domain Services",
+                "id": 10,
+                "message": [],
+                "reboot_required": false,
+                "restart_needed": false,
+                "skip_reason": "NotSkipped",
+                "success": true
+            },
+            {
+                "display_name": "Remote Server Administration Tools",
+                "id": 67,
+                "message": [],
+                "reboot_required": false,
+                "restart_needed": false,
+                "skip_reason": "NotSkipped",
+                "success": true
+            },
+            {
+                "display_name": "Active Directory module for Windows PowerShell",
+                "id": 331,
+                "message": [],
+                "reboot_required": false,
+                "restart_needed": false,
+                "skip_reason": "NotSkipped",
+                "success": true
+            },
+            {
+                "display_name": "AD DS and AD LDS Tools",
+                "id": 329,
+                "message": [],
+                "reboot_required": false,
+                "restart_needed": false,
+                "skip_reason": "NotSkipped",
+                "success": true
+            },
+            {
+                "display_name": "Role Administration Tools",
+                "id": 256,
+                "message": [],
+                "reboot_required": false,
+                "restart_needed": false,
+                "skip_reason": "NotSkipped",
+                "success": true
+            }
+        ],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 20:24:48,931 p=15975 u=yannick n=ansible | TASK [Vérifier si le rôle AD DS est installé] **********************************************************************************************************************************************
+2025-04-19 20:24:58,162 p=15975 u=yannick n=ansible | changed: [4.178.184.158]
+2025-04-19 20:24:58,170 p=15975 u=yannick n=ansible | TASK [Afficher le statut du rôle AD DS] ****************************************************************************************************************************************************
+2025-04-19 20:24:58,223 p=15975 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "ad_role_status": {
+        "changed": true,
+        "cmd": "(Get-WindowsFeature -Name AD-Domain-Services).Installed",
+        "delta": "0:00:04.250032",
+        "end": "2025-04-19 08:24:57.863049",
+        "failed": false,
+        "rc": 0,
+        "start": "2025-04-19 08:24:53.613017",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "True\r\n",
+        "stdout_lines": [
+            "True"
+        ]
+    }
+}
+2025-04-19 20:24:58,230 p=15975 u=yannick n=ansible | TASK [Vérifier la valeur de safe_mode_password] ********************************************************************************************************************************************
+2025-04-19 20:24:58,280 p=15975 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "safe_mode_password": "Pa$$word1234!"
+}
+2025-04-19 20:24:58,287 p=15975 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] *****************************************************************************************************************
+2025-04-19 20:25:02,111 p=15975 u=yannick n=ansible | fatal: [4.178.184.158]: FAILED! => {"changed": false, "msg": "Get-AnsibleParam: Missing required argument: safe_mode_password"}
+2025-04-19 20:25:02,113 p=15975 u=yannick n=ansible | PLAY RECAP *********************************************************************************************************************************************************************************
+2025-04-19 20:25:02,113 p=15975 u=yannick n=ansible | 4.178.184.158              : ok=6    changed=2    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 20:42:05,041 p=16011 u=yannick n=ansible | ERROR! Unable to read source file (/home/yannick/Infra_as_code/projet_etude/srv_windows/test1/vault.yml): [Errno 2] No such file or directory: '/home/yannick/Infra_as_code/projet_etude/srv_windows/test1/vault.yml'
+2025-04-19 20:46:03,328 p=16064 u=yannick n=ansible | ERROR! Attempting to decrypt but no vault secrets found
+2025-04-19 20:48:26,908 p=16070 u=yannick n=ansible | ERROR! Attempting to decrypt but no vault secrets found
+2025-04-19 20:49:27,004 p=16072 u=yannick n=ansible | ERROR! Decryption failed (no vault secrets were found that could decrypt) for /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/vault.yml
+2025-04-19 20:50:55,285 p=16077 u=yannick n=ansible | ERROR! the playbook: playbook.yml could not be found
+2025-04-19 20:51:25,822 p=16085 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] **************************
+2025-04-19 20:51:25,838 p=16085 u=yannick n=ansible | TASK [Gathering Facts] ***************************************************************************
+2025-04-19 20:51:33,458 p=16085 u=yannick n=ansible | ok: [4.178.184.158]
+2025-04-19 20:51:33,469 p=16085 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ************************************
+2025-04-19 20:51:37,512 p=16085 u=yannick n=ansible | ok: [4.178.184.158]
+2025-04-19 20:51:37,519 p=16085 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] *********************************************
+2025-04-19 20:51:37,561 p=16085 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 20:51:37,569 p=16085 u=yannick n=ansible | TASK [Vérifier si le rôle AD DS est installé] ****************************************************
+2025-04-19 20:51:43,570 p=16085 u=yannick n=ansible | changed: [4.178.184.158]
+2025-04-19 20:51:43,579 p=16085 u=yannick n=ansible | TASK [Afficher le statut du rôle AD DS] **********************************************************
+2025-04-19 20:51:43,634 p=16085 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "ad_role_status": {
+        "changed": true,
+        "cmd": "(Get-WindowsFeature -Name AD-Domain-Services).Installed",
+        "delta": "0:00:02.281248",
+        "end": "2025-04-19 08:51:43.295825",
+        "failed": false,
+        "rc": 0,
+        "start": "2025-04-19 08:51:41.014577",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "True\r\n",
+        "stdout_lines": [
+            "True"
+        ]
+    }
+}
+2025-04-19 20:51:43,643 p=16085 u=yannick n=ansible | TASK [Vérifier la valeur de safe_mode_password] **************************************************
+2025-04-19 20:51:43,691 p=16085 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "safe_mode_password": "Pa$$word1234!"
+}
+2025-04-19 20:51:43,699 p=16085 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] ***********************
+2025-04-19 20:53:56,304 p=16085 u=yannick n=ansible | changed: [4.178.184.158]
+2025-04-19 20:53:56,312 p=16085 u=yannick n=ansible | TASK [Afficher le statut de la promotion en contrôleur de domaine] *******************************
+2025-04-19 20:53:56,360 p=16085 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "domain_status": {
+        "changed": true,
+        "failed": false,
+        "reboot_required": true
+    }
+}
+2025-04-19 20:53:56,370 p=16085 u=yannick n=ansible | TASK [Redémarrer le serveur après la promotion en contrôleur de domaine] *************************
+2025-04-19 20:53:56,421 p=16085 u=yannick n=ansible | fatal: [4.178.184.158]: FAILED! => {"changed": false, "msg": "Invalid options for win_reboot: timeout"}
+2025-04-19 20:53:56,424 p=16085 u=yannick n=ansible | PLAY RECAP ***************************************************************************************
+2025-04-19 20:53:56,424 p=16085 u=yannick n=ansible | 4.178.184.158              : ok=8    changed=2    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-04-19 20:55:35,114 p=16111 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] **************************
+2025-04-19 20:55:35,130 p=16111 u=yannick n=ansible | TASK [Gathering Facts] ***************************************************************************
+2025-04-19 20:55:41,057 p=16111 u=yannick n=ansible | ok: [4.178.184.158]
+2025-04-19 20:55:41,069 p=16111 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ************************************
+2025-04-19 20:55:59,128 p=16111 u=yannick n=ansible | ok: [4.178.184.158]
+2025-04-19 20:55:59,136 p=16111 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] *********************************************
+2025-04-19 20:55:59,187 p=16111 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "ad_feature_status": {
+        "changed": false,
+        "exitcode": "NoChangeNeeded",
+        "failed": false,
+        "feature_result": [],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 20:55:59,193 p=16111 u=yannick n=ansible | TASK [Vérifier si le rôle AD DS est installé] ****************************************************
+2025-04-19 20:56:05,400 p=16111 u=yannick n=ansible | changed: [4.178.184.158]
+2025-04-19 20:56:05,407 p=16111 u=yannick n=ansible | TASK [Afficher le statut du rôle AD DS] **********************************************************
+2025-04-19 20:56:05,456 p=16111 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "ad_role_status": {
+        "changed": true,
+        "cmd": "(Get-WindowsFeature -Name AD-Domain-Services).Installed",
+        "delta": "0:00:02.390579",
+        "end": "2025-04-19 08:56:05.127159",
+        "failed": false,
+        "rc": 0,
+        "start": "2025-04-19 08:56:02.736580",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "True\r\n",
+        "stdout_lines": [
+            "True"
+        ]
+    }
+}
+2025-04-19 20:56:05,463 p=16111 u=yannick n=ansible | TASK [Vérifier la valeur de safe_mode_password] **************************************************
+2025-04-19 20:56:05,513 p=16111 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "safe_mode_password": "Pa$$word1234!"
+}
+2025-04-19 20:56:05,523 p=16111 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] ***********************
+2025-04-19 20:56:10,221 p=16111 u=yannick n=ansible | changed: [4.178.184.158]
+2025-04-19 20:56:10,228 p=16111 u=yannick n=ansible | TASK [Afficher le statut de la promotion en contrôleur de domaine] *******************************
+2025-04-19 20:56:10,278 p=16111 u=yannick n=ansible | ok: [4.178.184.158] => {
+    "domain_status": {
+        "changed": true,
+        "failed": false,
+        "reboot_required": true
+    }
+}
+2025-04-19 20:56:10,286 p=16111 u=yannick n=ansible | TASK [Redémarrer le serveur après la promotion en contrôleur de domaine] *************************
+2025-04-19 20:57:19,815 p=16111 u=yannick n=ansible | changed: [4.178.184.158]
+2025-04-19 20:57:19,824 p=16111 u=yannick n=ansible | TASK [Attendre que la machine soit de nouveau disponible] ****************************************
+2025-04-19 20:57:29,712 p=16111 u=yannick n=ansible | ok: [4.178.184.158]
+2025-04-19 20:57:29,726 p=16111 u=yannick n=ansible | PLAY RECAP ***************************************************************************************
+2025-04-19 20:57:29,727 p=16111 u=yannick n=ansible | 4.178.184.158              : ok=10   changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-04-19 21:20:52,833 p=16378 u=yannick n=ansible | ERROR! Attempting to decrypt but no vault secrets found
+2025-04-19 21:21:22,343 p=16380 u=yannick n=ansible | [WARNING]: Unable to parse
+/home/yannick/Infra_as_code/projet_etude/srv_windows/test1/inventory.ini  # Chemin vers votre
+fichier d'inventaire as an inventory source
+
+2025-04-19 21:21:22,343 p=16380 u=yannick n=ansible | [WARNING]: No inventory was parsed, only implicit localhost is available
+
+2025-04-19 21:21:22,348 p=16380 u=yannick n=ansible | [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit
+localhost does not match 'all'
+
+2025-04-19 21:21:22,564 p=16380 u=yannick n=ansible | [WARNING]: Could not match supplied host pattern, ignoring: windows
+
+2025-04-19 21:21:22,565 p=16380 u=yannick n=ansible | ERROR! Attempting to decrypt but no vault secrets found
+2025-04-19 21:22:41,979 p=16384 u=yannick n=ansible | ERROR! Attempting to decrypt but no vault secrets found
+2025-04-19 21:24:03,456 p=16407 u=yannick n=ansible | ERROR! Decryption failed (no vault secrets were found that could decrypt) on /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/vault.yml
+2025-04-19 21:36:31,672 p=16590 u=yannick n=ansible | ERROR! The vault password file /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/home/yannick/.vault_pass.txt was not found
+2025-04-19 21:39:57,185 p=16636 u=yannick n=ansible | ERROR! The vault password file /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/home/yannick/.vault_pass.txt was not found
+2025-04-19 21:42:16,536 p=16652 u=yannick n=ansible | ERROR! The vault password file /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/home/yannick/.vault_pass.txt was not found
+2025-04-19 21:46:51,539 p=16815 u=yannick n=ansible | ERROR! The vault password file /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/home/yannick/.vault_pass.txt was not found
+2025-04-19 21:48:29,019 p=16858 u=yannick n=ansible | ERROR! Decryption failed (no vault secrets were found that could decrypt) for /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/vault.yml
+2025-04-19 21:48:54,616 p=16861 u=yannick n=ansible | ERROR! Decryption failed (no vault secrets were found that could decrypt) on /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/vault.yml
+2025-04-19 21:50:48,326 p=16871 u=yannick n=ansible | ERROR! Decryption failed (no vault secrets were found that could decrypt) on /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/vault.yml
+2025-04-19 21:50:53,624 p=16873 u=yannick n=ansible | ERROR! Decryption failed (no vault secrets were found that could decrypt) on /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/vault.yml
+2025-04-19 21:53:46,227 p=16902 u=yannick n=ansible | ERROR! The vault password file /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/vault_pass.txt was not found
+2025-04-19 21:55:52,959 p=16916 u=yannick n=ansible | ERROR! The vault password file /home/yannick/Infra_as_code/projet_etude/srv_windows/test1/vault_pass.txt was not found
+2025-04-19 22:00:47,356 p=16965 u=yannick n=ansible | PLAY [Installer et configurer Active Directory Domain Services (AD DS)] **************************
+2025-04-19 22:00:47,371 p=16965 u=yannick n=ansible | TASK [Gathering Facts] ***************************************************************************
+2025-04-19 22:01:00,757 p=16965 u=yannick n=ansible | ok: [52.143.151.37]
+2025-04-19 22:01:00,770 p=16965 u=yannick n=ansible | TASK [Vérifier si la fonctionnalité AD DS est déjà installée] ************************************
+2025-04-19 22:01:59,403 p=16965 u=yannick n=ansible | changed: [52.143.151.37]
+2025-04-19 22:01:59,411 p=16965 u=yannick n=ansible | TASK [Afficher le statut de la fonctionnalité AD DS] *********************************************
+2025-04-19 22:01:59,465 p=16965 u=yannick n=ansible | ok: [52.143.151.37] => {
+    "ad_feature_status": {
+        "changed": true,
+        "exitcode": "Success",
+        "failed": false,
+        "feature_result": [
+            {
+                "display_name": "Active Directory Domain Services",
+                "id": 10,
+                "message": [],
+                "reboot_required": false,
+                "restart_needed": false,
+                "skip_reason": "NotSkipped",
+                "success": true
+            },
+            {
+                "display_name": "Remote Server Administration Tools",
+                "id": 67,
+                "message": [],
+                "reboot_required": false,
+                "restart_needed": false,
+                "skip_reason": "NotSkipped",
+                "success": true
+            },
+            {
+                "display_name": "Active Directory module for Windows PowerShell",
+                "id": 331,
+                "message": [],
+                "reboot_required": false,
+                "restart_needed": false,
+                "skip_reason": "NotSkipped",
+                "success": true
+            },
+            {
+                "display_name": "AD DS and AD LDS Tools",
+                "id": 329,
+                "message": [],
+                "reboot_required": false,
+                "restart_needed": false,
+                "skip_reason": "NotSkipped",
+                "success": true
+            },
+            {
+                "display_name": "Role Administration Tools",
+                "id": 256,
+                "message": [],
+                "reboot_required": false,
+                "restart_needed": false,
+                "skip_reason": "NotSkipped",
+                "success": true
+            }
+        ],
+        "reboot_required": false,
+        "success": true
+    }
+}
+2025-04-19 22:01:59,471 p=16965 u=yannick n=ansible | TASK [Vérifier si le rôle AD DS est installé] ****************************************************
+2025-04-19 22:02:06,407 p=16965 u=yannick n=ansible | changed: [52.143.151.37]
+2025-04-19 22:02:06,415 p=16965 u=yannick n=ansible | TASK [Afficher le statut du rôle AD DS] **********************************************************
+2025-04-19 22:02:06,463 p=16965 u=yannick n=ansible | ok: [52.143.151.37] => {
+    "ad_role_status": {
+        "changed": true,
+        "cmd": "(Get-WindowsFeature -Name AD-Domain-Services).Installed",
+        "delta": "0:00:02.468725",
+        "end": "2025-04-19 10:02:06.159383",
+        "failed": false,
+        "rc": 0,
+        "start": "2025-04-19 10:02:03.690658",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "True\r\n",
+        "stdout_lines": [
+            "True"
+        ]
+    }
+}
+2025-04-19 22:02:06,470 p=16965 u=yannick n=ansible | TASK [Vérifier la valeur de safe_mode_password] **************************************************
+2025-04-19 22:02:06,516 p=16965 u=yannick n=ansible | ok: [52.143.151.37] => {
+    "safe_mode_password": "Pa$$word1234!"
+}
+2025-04-19 22:02:06,523 p=16965 u=yannick n=ansible | TASK [Configurer le premier contrôleur de domaine dans une nouvelle forêt] ***********************
+2025-04-19 22:04:17,184 p=16965 u=yannick n=ansible | changed: [52.143.151.37]
+2025-04-19 22:04:17,194 p=16965 u=yannick n=ansible | TASK [Afficher le statut de la promotion en contrôleur de domaine] *******************************
+2025-04-19 22:04:17,243 p=16965 u=yannick n=ansible | ok: [52.143.151.37] => {
+    "domain_status": {
+        "changed": true,
+        "failed": false,
+        "reboot_required": true
+    }
+}
+2025-04-19 22:04:17,248 p=16965 u=yannick n=ansible | TASK [Redémarrer le serveur après la promotion en contrôleur de domaine] *************************
+2025-04-19 22:05:29,080 p=16965 u=yannick n=ansible | changed: [52.143.151.37]
+2025-04-19 22:05:29,089 p=16965 u=yannick n=ansible | TASK [Attendre que la machine soit de nouveau disponible] ****************************************
+2025-04-19 22:05:38,819 p=16965 u=yannick n=ansible | ok: [52.143.151.37]
+2025-04-19 22:05:38,833 p=16965 u=yannick n=ansible | PLAY RECAP ***************************************************************************************
+2025-04-19 22:05:38,834 p=16965 u=yannick n=ansible | 52.143.151.37              : ok=10   changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
