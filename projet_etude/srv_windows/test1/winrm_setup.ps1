@@ -1,11 +1,32 @@
-# Enable WinRM over HTTPS
-winrm quickconfig -force
-winrm set winrm/config/service '@{AllowUnencrypted="false"}'
-winrm set winrm/config/service/auth '@{Basic="true"}'
+# Script PowerShell à exécuter sur la VM Windows Server 2022
+# pour ouvrir le port d'écoute WINRM HTTP (NON SÉCURISÉ)
 
-# Allow HTTPS listener (self-signed cert)
-$cert = New-SelfSignedCertificate -DnsName "winserv" -CertStoreLocation Cert:\LocalMachine\My
-New-Item -Path WSMan:\LocalHost\Listener -Transport HTTPS -Address * -CertificateThumbPrint $cert.Thumbprint -Force
+# Configuration du port HTTP WINRM (par défaut 5985)
+$WinRMHTTPPort = 5985
 
-# Allow firewall
-New-NetFirewallRule -DisplayName "WinRM HTTPS" -Name "WinRM-HTTPS" -Protocol TCP -LocalPort 5986 -Action Allow
+# Vérifier si le listener HTTP WINRM existe déjà
+$WinRMHTTPListener = Get-WSManInstance -ResourceURI winrm/config/Listener -SelectorSet @{Address="*"; Transport="HTTP"}
+
+if (-not $WinRMHTTPListener) {
+    # Créer le listener HTTP WINRM
+    New-WSManInstance -ResourceURI winrm/config/Listener -SelectorSet @{Address="*"; Transport="HTTP"} -ValueSet @{Port=$WinRMHTTPPort}
+    Write-Host "Listener HTTP WINRM créé sur le port $($WinRMHTTPPort) (NON SÉCURISÉ)."
+} else {
+    Write-Host "Listener HTTP WINRM existe déjà sur le port $($WinRMHTTPPort)."
+}
+
+# Ouvrir le port dans le pare-feu Windows
+$FirewallRuleName = "WINRM-HTTP-In-TCP"
+
+if (-not (Get-NetFirewallRule -Name $FirewallRuleName -ErrorAction SilentlyContinue)) {
+    New-NetFirewallRule -Name $FirewallRuleName -DisplayName "Windows Remote Management (HTTP-In)" -Description "Autorise le trafic WINRM HTTP entrant (NON SÉCURISÉ)." -Protocol TCP -LocalPort $WinRMHTTPPort -Direction Inbound -Action Allow -Enabled True
+    Write-Host "Règle de pare-feu $($FirewallRuleName) ajoutée pour autoriser le trafic WINRM HTTP sur le port $($WinRMHTTPPort) (NON SÉCURISÉ)."
+} else {
+    Write-Host "Règle de pare-feu $($FirewallRuleName) existe déjà."
+}
+
+# Activer PSRemoting si ce n'est pas déjà fait
+if (-not (Get-PSSessionConfiguration -Name Microsoft.PowerShell)) {
+    Enable-PSRemoting -Force
+    Write-Host "PSRemoting activé."
+}
