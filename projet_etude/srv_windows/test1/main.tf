@@ -104,3 +104,16 @@ resource "azurerm_windows_virtual_machine" "vm" {
   custom_data = base64encode(file("winrm_setup.ps1"))
 }
 
+resource "azurerm_virtual_machine_extension" "winrm_setup" {
+  name                 = "EnableWinRM"
+  virtual_machine_id   = azurerm_windows_virtual_machine.vm.id
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.10"
+
+  settings = jsonencode({
+    "fileUris" = []
+    "commandToExecute" = "powershell -ExecutionPolicy Unrestricted -Command \"Set-Item WSMan:\\localhost\\Service\\AllowUnencrypted -Value true; Set-Item WSMan:\\localhost\\Service\\Auth\\Basic -Value true; Set-Service WinRM -StartupType Automatic; Start-Service WinRM; New-NetFirewallRule -DisplayName 'WinRM Inbound' -Direction Inbound -Protocol TCP -LocalPort 5985 -Action Allow\""
+  })
+}
+

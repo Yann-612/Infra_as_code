@@ -19,7 +19,7 @@ vm_size = "Standard_B1s"
 public_ip_name = "public-ip"
 
 admin_username = "adminuser"
-admin_password = "P@ssw0rd123!" # Mot de passe de l'administrateur (doit respecter les exigences de complexité d'Azure)
+admin_password = "Pa$$word1234!" # Mot de passe de l'administrateur (doit respecter les exigences de complexité d'Azure)
 #sh_public_key = "C:/Users/Yann_/.ssh/id_rsa.pub"
 
 
