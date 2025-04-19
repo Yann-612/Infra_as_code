@@ -1,0 +1,49 @@
+Fichiers contenant des secrets
+
+vault.yml
+.vault_pass.txt
+group_vars//vault.yml
+host_vars//vault.yml
+
+Fichiers de test ou temporaire
+
+*.retry
+*.log
+*.bak
+*.swp
+*.swo
+*.tmp
+
+Cache d'Ansible facts (si activé)
+
+.fact_cache/
+
+Répertoire roles téléchargé (si tu fais ansible-galaxy install -r requirements.yml)
+
+roles/**/
+!roles/README.md
+
+Collections (si utilisées localement)
+
+collections/
+
+Répertoires Terraform (si projet hybride)
+
+*.tfstate
+.tfstate.
+.terraform/
+
+Fichiers d'éditeur (VS Code, PyCharm, etc.)
+
+.vscode/
+.idea/
+*.code-workspace
+
+Fichiers de documentation générés
+
+*.md~
+*.pdf
+
+Fichiers d'inventaire temporaires
+
+inventory.generated.ini
