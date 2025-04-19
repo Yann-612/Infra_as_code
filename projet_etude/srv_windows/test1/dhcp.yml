@@ -1,0 +1,95 @@
+---
+- name: Installer et configurer Active Directory Domain Services (AD DS) et DHCP
+  hosts: windows
+  become: yes
+  become_method: runas
+  become_user: "{{ domain_admin_user }}"
+  vars_files:
+    - vault.yml  # Variables sensibles chiffrées avec Ansible Vault
+
+  tasks:
+    # 1. Vérifier si la fonctionnalité AD DS est déjà installée
+    - name: Vérifier si la fonctionnalité AD DS est déjà installée
+      win_feature:
+        name: AD-Domain-Services
+        state: present
+      register: ad_feature_status
+
+    # 2. Afficher le statut de la fonctionnalité AD DS
+    - name: Afficher le statut de la fonctionnalité AD DS
+      debug:
+        var: ad_feature_status
+
+    # 3. Vérifier si le rôle AD DS est installé
+    - name: Vérifier si le rôle AD DS est installé
+      win_shell: |
+        (Get-WindowsFeature -Name AD-Domain-Services).Installed
+      register: ad_role_status
+      ignore_errors: yes
+
+    # 4. Afficher le statut du rôle AD DS
+    - name: Afficher le statut du rôle AD DS
+      debug:
+        var: ad_role_status
+
+    # 5. Configurer le premier contrôleur de domaine dans une nouvelle forêt
+    - name: Configurer le premier contrôleur de domaine dans une nouvelle forêt
+      win_domain:
+        dns_domain_name: "{{ domain_name }}"
+        safe_mode_password: "{{ safe_mode_password }}"
+        domain_admin_user: "{{ domain_admin_user }}"
+        domain_admin_password: "{{ domain_admin_password }}"
+        domain_type: forest
+        state: domain_controller
+      register: domain_status
+      when: ad_role_status.stdout.strip() == "True"
+
+    # 6. Afficher le statut de la promotion en contrôleur de domaine
+    - name: Afficher le statut de la promotion en contrôleur de domaine
+      debug:
+        var: domain_status
+
+    # 7. Redémarrer le serveur après la promotion en contrôleur de domaine
+    - name: Redémarrer le serveur après la promotion en contrôleur de domaine
+      win_reboot:
+        msg: "Redémarrage après promotion en DC"
+      when: domain_status.changed
+
+    # 8. Attendre que la machine soit de nouveau disponible
+    - name: Attendre que la machine soit de nouveau disponible
+      wait_for_connection:
+        timeout: 300
+        sleep: 15
+
+    # 9. Installer le rôle DHCP
+    - name: Installer le rôle DHCP
+      win_feature:
+        name: DHCP
+        state: present
+      register: dhcp_feature_status
+
+    # 10. Vérifier l'installation du rôle DHCP
+    - name: Afficher le statut du rôle DHCP
+      debug:
+        var: dhcp_feature_status
+
+    # 11. Configurer l'étendue DHCP (plage d'adresses IP)
+    - name: Configurer l'étendue DHCP
+      win_dhcp_scope:
+        name: "Scope-Primary"
+        state: present
+        start_ip: "192.168.1.10"
+        end_ip: "192.168.1.100"
+        subnet_mask: "255.255.255.0"
+        router: "192.168.1.1"
+        dns_servers:
+          - "192.168.1.1"  # Ton contrôleur de domaine AD (si tu utilises la même machine)
+      when: dhcp_feature_status.changed
+
+    # 12. Démarrer le service DHCP
+    - name: Démarrer le service DHCP
+      win_service:
+        name: DHCPServer
+        state: started
+        start_mode: auto
+      when: dhcp_feature_status.changed
