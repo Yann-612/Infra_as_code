@@ -1,0 +1,140 @@
+---
+# Playbook de déploiement d'un serveur DHCP sur une VM Azure
+# ======================================================
+
+- name: Deploy DHCP Server on Azure VM
+  hosts: azure_dhcp_server     # Cible le groupe de serveurs défini dans inventory.ini
+  gather_facts: no             # Désactive la collecte des facts pour accélérer l'exécution
+  vars_files:
+    - vars/dhcp_vars.yml      # Charge les variables de configuration
+
+  tasks:
+    # Étape 0: Vérification préalable
+    - name: Check connectivity
+      win_ping:
+
+    - name: Create backup directory
+      win_file:
+        path: C:\dhcp_backup
+        state: directory
+
+    - name: Backup existing DHCP configuration
+      win_shell: |
+        $date = Get-Date -Format 'yyyy-MM-dd_HH-mm'
+        Export-DhcpServer -File "C:\dhcp_backup\dhcp_backup_$date.xml" -Force
+      ignore_errors: yes
+
+    # Étape 1: Installation du rôle DHCP Server
+    - name: Install DHCP Server
+      win_feature:
+        name: DHCP
+        state: present
+        include_management_tools: yes  # Installe aussi les outils d'administration
+      register: dhcp_install           # Enregistre le résultat pour vérifier si un reboot est nécessaire
+
+    # Étape 2: Création et configuration du scope DHCP
+    - name: Create and configure DHCP scope
+      win_shell: |
+        Get-DhcpServerv4Scope | Where-Object {$_.ScopeId -eq '{{ dhcp_scope_id }}'} | Remove-DhcpServerv4Scope -Force
+        Add-DhcpServerv4Scope -Name 'Primary Scope' -StartRange '{{ dhcp_scope_id | regex_replace('\.0$', '.100') }}' -EndRange '{{ dhcp_scope_id | regex_replace('\.0$', '.200') }}' -SubnetMask '{{ dhcp_subnet_mask }}' -State 'Active'
+        Set-DhcpServerv4OptionValue -ScopeId '{{ dhcp_scope_id }}' -Router '{{ dhcp_gateway }}'
+        Set-DhcpServerv4OptionValue -ScopeId '{{ dhcp_scope_id }}' -DnsServer '{{ dhcp_dns_servers | join("','") }}'
+        Set-DhcpServerv4OptionValue -ScopeId '{{ dhcp_scope_id }}' -DnsDomain '{{ dhcp_domain_name }}'
+        Write-Output 'Configuration du scope DHCP :'
+        Get-DhcpServerv4Scope | Format-List
+      register: dhcp_scope
+      when: dhcp_install.reboot_required == false
+
+    - name: Display DHCP scope information
+      debug:
+        var: dhcp_scope
+
+    # Étape 3: Ajout des réservations DHCP
+    - name: Add DHCP reservations
+      win_shell: |
+        Get-DhcpServerv4Reservation -ScopeId '{{ dhcp_scope_id }}' -ErrorAction SilentlyContinue | Where-Object {$_.IPAddress -eq '{{ item.ip }}'} | Remove-DhcpServerv4Reservation -Force
+        Add-DhcpServerv4Reservation -ScopeId '{{ dhcp_scope_id }}' -IPAddress '{{ item.ip }}' -ClientId '{{ item.mac }}' -Name '{{ item.hostname }}'
+        Write-Output 'Réservation DHCP créée :'
+        Get-DhcpServerv4Reservation -ScopeId '{{ dhcp_scope_id }}' | Where-Object {$_.IPAddress -eq '{{ item.ip }}'} | Format-List
+      loop: "{{ dhcp_reservations }}"
+      register: dhcp_reservations_result
+      when: dhcp_install.reboot_required == false
+
+    # Étape 4: Autorisation du serveur DHCP dans Active Directory
+    - name: Authorize DHCP server in AD
+      win_shell: Add-DhcpServerInDC
+      when: dhcp_install.reboot_required == false
+      ignore_errors: yes               # Continue même si l'autorisation échoue
+
+    # Étape 5: Configuration du pare-feu
+    - name: Configure Windows Firewall for DHCP
+      win_shell: |
+        New-NetFirewallRule -DisplayName 'DHCP Server' -Direction Inbound -Protocol UDP -LocalPort 67 -Action Allow -Enabled True
+        New-NetFirewallRule -DisplayName 'DHCP Client' -Direction Inbound -Protocol UDP -LocalPort 68 -Action Allow -Enabled True
+      ignore_errors: yes
+
+    # Étape 6: Redémarrage du service DHCP
+    - name: Restart DHCP Service
+      win_service:
+        name: DHCPServer
+        state: restarted
+      when: dhcp_install.reboot_required == false
+      register: dhcp_service
+
+    # Étape 7: Vérification finale
+    - name: Verify DHCP Service is running
+      win_shell: |
+        $service = Get-Service -Name 'DHCPServer'
+        if ($service.Status -ne 'Running') {
+            throw 'DHCP Service is not running!'
+        }
+        $scope = Get-DhcpServerv4Scope
+        if (-not $scope) {
+            throw 'No DHCP scope found!'
+        }
+        Write-Output 'DHCP Service is running and scope is configured.'
+      register: dhcp_verify
+
+    # Étape 8: Configuration post-déploiement
+    - name: Configure DHCP notifications and logging
+      win_shell: |
+        # Configuration des notifications par email (optionnel)
+        # Set-DhcpServerv4EmailNotification -Server $env:COMPUTERNAME -Enable $true -EmailAddress 'admin@{{ dhcp_domain_name }}' -SMTPServer 'smtp.{{ dhcp_domain_name }}'        
+
+        # Configuration de la journalisation avancée
+        Set-DhcpServerAuditLog -ComputerName $env:COMPUTERNAME -Enable $true -Type 'DhcpServFailure,IPAddressConflict,DhcpDeleted,DhcpExpired'
+        Set-DhcpServerv4FilterList -ComputerName $env:COMPUTERNAME -Enable $true -AllowList $true -DenyList $true
+
+        # Configuration de la sauvegarde automatique
+        $backupPath = 'C:\dhcp_backup'
+        $taskName = 'DHCP_Backup'
+        $action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument "-Command `"Export-DhcpServer -File '$backupPath\dhcp_backup_`$(Get-Date -Format 'yyyy-MM-dd').xml' -Force`""
+        $trigger = New-ScheduledTaskTrigger -Daily -At '23:00'
+        Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Description 'Sauvegarde quotidienne du serveur DHCP' -Force
+
+        # Vérification des paramètres de sécurité
+        $conflicts = Get-DhcpServerv4ScopeStatistics -ScopeId '{{ dhcp_scope_id }}' | Select-Object -ExpandProperty ConflictDetectionAttempts
+        if ($conflicts -gt 0) {
+            Write-Warning "Détection de conflits d'adresses IP : $conflicts tentatives"
+        }
+
+        # Génération du rapport
+        $report = @{
+            'Scope' = Get-DhcpServerv4Scope | Select-Object ScopeId, SubnetMask, Name, State
+            'Options' = Get-DhcpServerv4OptionValue -ScopeId '{{ dhcp_scope_id }}' | Select-Object OptionId, Name, Value
+            'Reservations' = Get-DhcpServerv4Reservation -ScopeId '{{ dhcp_scope_id }}' | Select-Object IPAddress, ClientId, Name
+            'Statistics' = Get-DhcpServerv4ScopeStatistics -ScopeId '{{ dhcp_scope_id }}'
+            'Audit' = Get-DhcpServerAuditLog
+        }
+        $report | ConvertTo-Json -Depth 3 | Set-Content -Path 'C:\dhcp_backup\deployment_report.json'
+        Write-Output 'Rapport de déploiement généré avec succès'
+      register: post_deploy
+      ignore_errors: yes
+
+    - name: Display deployment status
+      debug:
+        msg: |
+          DHCP Server deployment completed:
+          - Service Status: {{ dhcp_service.state }}
+          - Verification: {{ dhcp_verify.stdout }}
+          - Post-deployment: {{ post_deploy.stdout | default('Completed') }}

@@ -1,0 +1,33 @@
+---
+# Configuration du scope DHCP principal
+# ====================================
+
+# Réseau et masque de sous-réseau
+dhcp_scope_id: "10.0.1.0"      # Adresse réseau de base
+dhcp_subnet_mask: "255.255.255.0"  # Masque en /24
+
+# Configuration réseau
+dhcp_gateway: "10.0.1.1"      # Passerelle par défaut
+dhcp_dns_servers:              # Serveurs DNS
+  - "10.0.1.4"                # Serveur DNS principal
+
+# Configuration du domaine
+dhcp_domain_name: "cyna.local"  # Nom de domaine pour les clients DHCP
+
+# Durée du bail DHCP
+dhcp_lease_duration: "8.00:00:00"  # Durée de 8 jours
+
+# Réservations d'adresses IP
+# =========================
+# Ces réservations garantissent que certains appareils
+# reçoivent toujours la même adresse IP
+dhcp_reservations:
+  # Serveur 1
+  - ip: "10.0.1.100"          # Adresse IP réservée
+    mac: "00-11-22-33-44-55"   # Adresse MAC du serveur
+    hostname: "server1"        # Nom d'hôte
+
+  # Serveur Windows
+  - ip: "10.0.1.101"          # Adresse IP réservée
+    mac: "00-11-22-33-44-56"   # Adresse MAC du serveur
+    hostname: "winserv"
