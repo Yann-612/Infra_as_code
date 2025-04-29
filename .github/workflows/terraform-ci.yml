@@ -48,7 +48,7 @@ on:        #les événements GitHub qui déclencheront l'exécution de ce workfl
   push:        #Indique que le workflow sera déclenché lorsqu'il y a un push (commits) vers le dépôt.  
     branches:  ["main"]       #  vers la branche nommée
   pull_request:        # Indique que le workflow sera également déclenché lorsqu'une pull request est créée ou mise à jour
-  workflow_dispatch:    # Ajout d'un déclencheur manuel
+                        # Ajout d'un déclencheur manuel
 
 permissions:      #Définit les permissions accordées au workflow
   contents: read
