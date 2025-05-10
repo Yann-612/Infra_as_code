@@ -1,44 +1,55 @@
 variable "region" {
-  description = "The AWS region to deploy resources"
+  description = "La region AWS dans laquelle déployer les ressources"
+  # La région par défaut est Paris (eu-west-3)
   type        = string
-  default     = "eu-west-3" # Default region set to Paris
+  default     = "eu-west-3" # Paris
 }
 
 variable "instance_type" {
-  description = "The type of EC2 instance"
+  description = "Le type d'instance EC2 à utiliser"
   type        = string
   default     = "t2.micro"
 }
 
 variable "ami" {
-  description = "The AMI ID to use for the EC2 instance"
+  description = "L'ID de l'AMI à utiliser pour l'instance EC2"
   type        = string
-  default     = "ami-0160e8d70ebc43ee1" # Valeur par défaut (modifiable)
 }
 
 variable "key_name" {
-  description = "The name of the key pair to use for SSH access"
+  description = "Le nom de la paire de clés SSH à utiliser pour accéder à l'instance EC2"
+  # Le nom de la paire de clés SSH doit correspondre à celui créé dans AWS
   type        = string
-  default     = "id_ed2551"
 }
 
 variable "desired_capacity" {
-  description = "The desired number of instances in the Auto Scaling group"
+  description = "La capacité désirée du groupe Auto Scaling"
   type        = number
   default     = 1
 }
 
 variable "access_key" {
-  description = "The AWS access key for authentication"
+  description = "la clée d'accès AWS pour l'authentification"
   type        = string
 }
 
 variable "secret_key" {
-  description = "The AWS secret key for authentication"
+  description = "la clée secrète AWS pour l'authentification"
   type        = string
 }
 
 variable "private_key_path" {
-  description = "The path to the private key for SSH access"
+  description = "Chemin vers le fichier de clé privée SSH"
+  type        = string
+}
+
+variable "ssh_user" {
+  description = "Utilisateur SSH par défaut pour se connecter à l'instance"
+  type        = string
+  default     = "ubuntu" # Utilisateur par défaut pour Ubuntu
+}
+
+variable "public_key_path" {
+  description = "Chemin vers le fichier de clé publique SSH"
   type        = string
 }

@@ -1,0 +1,86 @@
+---
+- name: Installer un serveur web sur Ubuntu
+  hosts: web_server
+  become: yes
+  gather_facts: true
+
+  vars:
+    ansible_python_interpreter:  /usr/bin/python3
+
+
+  tasks:
+    - name: Vérifier la version de Python
+      command: python3 --version
+      register: python_version
+
+    - name: Afficher la version de Python
+      debug:
+        msg: "Version de Python : {{ python_version.stdout }}"
+  
+      
+      
+      
+          ####  Serveur Amazon Linux #### 
+
+    - name: Mettre à jour les paquets 
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600    
+
+
+    - name: Installer Apache sur Ubuntu
+      apt:
+        name:  apache2
+        state: present
+  
+    - name: Démarrer et activer Apache2
+      service:
+        name: apache2 
+        state: started
+        enabled: true
+  
+
+    - name: Vérifier et créer /var/www/html si absent (httpd)
+      file:
+        path: /var/www/html
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+# 1. Assurer que le répertoire pour les images existe
+    - name: Créer le répertoire pour les images
+      file:
+        path: /var/www/html/images
+        state: directory
+        mode: '0755'
+
+    # 2. Télécharger le logo Ansible
+    - name: Télécharger le logo Ansible
+      get_url:
+        url: https://upload.wikimedia.org/wikipedia/commons/0/05/Ansible_Logo.png
+        dest: /var/www/html/images/Ansible_Logo.png
+        mode: '0644'
+
+    # 3. Télécharger le logo Terraform
+    - name: Télécharger le logo Terraform
+      get_url:
+        url:  https://icon.icepanel.io/Technology/svg/HashiCorp-Terraform.svg
+        dest:  /var/www/html/images/HashiCorp-Terraform.svg
+        mode: '0644'
+
+
+    - name: copy html file for site
+      ansible.builtin.copy:
+        src:  default_site_2.html
+        dest: /var/www/html/index.html
+        owner:  root
+        group:  root
+        mode: 0644        
+
+
+
+
+
+
+
