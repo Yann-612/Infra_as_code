@@ -67,5 +67,10 @@ variable "ssh_public_key" {
   type        = string
   #default     = "~/.ssh/id_rsa.pub"
   default     = "C:/Users/Yannick/.ssh/id_rsa.pub"
-
 }
+ 
+  variable "client_secret" {
+    description = "Secret du client Azure"
+    type        = string
+    default     = "votre_client_secret"
+  }

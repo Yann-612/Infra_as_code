@@ -1,0 +1,15 @@
+# Ignorer les fichiers contenant des informations sensibles
+
+
+# Ignorer les fichiers générés par Terraform
+.terraform/
+.terraform.lock.hcl
+
+# Ignorer les fichiers de logs ou temporaires
+*.log
+*.backup
+
+client_secret.auto.tfvars
+*.tfstate
+*.tfstate.*
+
