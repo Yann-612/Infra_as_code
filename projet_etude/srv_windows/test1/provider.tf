@@ -1,10 +1,9 @@
 # This file contains the provider configuration for AzureRM
 
 provider "azurerm" {
-  subscription_id = "ea74f97a-80cb-4d62-9ff9-04c1327d3880"
-  client_id       = "5fb41f78-d49e-4369-9ee8-e166f856c461"     # AppId
-  client_secret   = "vvI8Q~xvP6_ynhR5U9MdFHNys8hzY.X3BPN.RbkA" # password
-  tenant_id       = "b7b023b8-7c32-4c02-92a6-c8cdaa1d189c"     # tenant
-  features {}
+subscription_id = "646ca952-46fb-4252-912d-cc379b67948b"
+client_id = "d96bf417-1a9f-402c-8d0a-bf96649c09ad" # AppId
+client_secret = "Rvu8Q~RTA8OkI5xRjMNgA0hdDJSFEiPKrd5oRbA-" # password
+tenant_id = "b7b023b8-7c32-4c02-92a6-c8cdaa1d189c" # tenant
+features {}
 }
-
