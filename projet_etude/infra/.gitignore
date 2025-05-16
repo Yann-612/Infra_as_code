@@ -1,5 +1,5 @@
 # Ignorer les fichiers contenant des informations sensibles
-terraform.tfvars
+
 
 # Ignorer les fichiers générés par Terraform
 .terraform/
@@ -10,3 +10,6 @@ terraform.tfvars
 *.backup
 
 client_secret.auto.tfvars
+*.tfstate
+*.tfstate.*
+

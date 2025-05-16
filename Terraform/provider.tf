@@ -1,5 +1,4 @@
 # This file contains the provider configuration for AzureRM
-
 provider "azurerm" {
 subscription_id = "646ca952-46fb-4252-912d-cc379b67948b"
 client_id = "d96bf417-1a9f-402c-8d0a-bf96649c09ad" # AppId
