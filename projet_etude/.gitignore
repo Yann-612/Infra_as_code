@@ -2,3 +2,5 @@
 .terraform/
 .terraform/
 .terraform/
+client_secret.auto.tfvars
+*.tfstate

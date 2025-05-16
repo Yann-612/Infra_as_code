@@ -8,3 +8,5 @@ terraform.tfvars
 # Ignorer les fichiers de logs ou temporaires
 *.log
 *.backup
+
+client_secret.auto.tfvars

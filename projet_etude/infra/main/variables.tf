@@ -27,3 +27,9 @@ variable "ssh_public_key_path" {
   description = "Chemin vers le fichier de clé publique SSH"
   type        = string
 }
+
+variable "client_secret" {
+  description = "Client secret for authentication"
+  type        = string
+  sensitive   = true
+}

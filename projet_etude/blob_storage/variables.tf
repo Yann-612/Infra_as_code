@@ -11,3 +11,9 @@ variable "location" {
   description = "Région Azure où seront déployées les ressources"
   type        = string
 }
+
+variable "client_secret" {
+  description = "Client secret for authentication"
+  type        = string
+  sensitive   = true
+}
