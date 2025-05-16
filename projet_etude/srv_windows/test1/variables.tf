@@ -65,4 +65,10 @@ variable "security_group_name" {
   type        = string
 }
 
+variable "client_secret" {
+  description = "Client secret for authentication"
+  type        = string
+  sensitive   = true
+}
+
 

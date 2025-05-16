@@ -4,5 +4,3 @@
 .terraform/
 client_secret.auto.tfvars
 *.tfstate
-*.tfstate
-*auto.tfvars
