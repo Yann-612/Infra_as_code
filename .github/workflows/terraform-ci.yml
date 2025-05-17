@@ -35,24 +35,24 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: .github/workflows/terraform   # Lance la commande dans le dossier contenant tes fichiers Terraform
+        working-directory: .   # Lance la commande dans le dossier contenant tes fichiers Terraform
 
       - name: Terraform Format
         run: terraform fmt -check
-        working-directory: .github/workflows/terraform   # Vérifie que les fichiers sont bien formatés (ne modifie rien, échoue si ce n'est pas le cas)
+        working-directory: .   # Vérifie que les fichiers sont bien formatés (ne modifie rien, échoue si ce n'est pas le cas)
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: .github/workflows/terraform   # Valide la syntaxe et la cohérence des fichiers Terraform
+        working-directory: .  # Valide la syntaxe et la cohérence des fichiers Terraform
 
       - name: Terraform Plan
         run: terraform plan -var-file="terraform.tfvars"
-        working-directory: .github/workflows/terraform   # Génère un plan d'exécution Terraform en utilisant le fichier de variables
+        working-directory: .   # Génère un plan d'exécution Terraform en utilisant le fichier de variables
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push' # N'exécute cette étape que lors d'un push sur main
         run: terraform apply -auto-approve -input=false
-        working-directory: .github/workflows/terraform
+        working-directory: .
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   # Passe l'ID d'abonnement Azure depuis les secrets GitHub
           TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
