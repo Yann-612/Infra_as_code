@@ -1,6 +1,8 @@
 # Ce workflow installe Terraform CLI, configure l'authentification avec Terraform Cloud,
 # et exécute les commandes Terraform sur GitHub Actions lors des push, pull request ou déclenchement manuel.
 
+
+
 name: 'Terraform'      # Nom du workflow affiché dans GitHub Actions
 
 on:
@@ -58,6 +60,16 @@ jobs:
           TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
           TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}       # Passe le client_secret Azure depuis les secrets GitHub
           TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
+
+      - name: Generate terraform.tfvars
+        run: |
+          echo 'access_key = "${{ secrets.AWS_ACCESS_KEY_ID }}"' > terraform.tfvars
+          echo 'secret_key = "${{ secrets.AWS_SECRET_ACCESS_KEY }}"' >> terraform.tfvars
+          echo 'region = "eu-west-3"' >> terraform.tfvars
+          echo 'instance_type = "t2.micro"' >> terraform.tfvars
+          echo 'ami = "ami-xxxxxxxx"' >> terraform.tfvars
+          echo 'key_name = "your-keypair"' >> terraform.tfvars
+    # Add any other variables (non-secret) directly, and use secrets for sensitive values
 
       - name: Debug Terraform Directory
         run: ls -la .github/workflows/terraform   # Affiche le contenu du dossier Terraform pour le debug (optionnel)
