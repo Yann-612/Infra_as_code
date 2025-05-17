@@ -3,6 +3,6 @@ location            = "France Central"
 vm_name             = "srv-web-linux"
 admin_username      = "adminuser"
 #ssh_public_key      = "~/.ssh/id_rsa.pub"
-prefix         = "webvm"
+prefix = "webvm"
 
 
