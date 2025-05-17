@@ -34,3 +34,7 @@ variable "client_secret" {
   sensitive = true
 }
 
+variable "subscription_id" { type = string }
+variable "client_id"       { type = string }
+variable "tenant_id"       { type = string }
+
