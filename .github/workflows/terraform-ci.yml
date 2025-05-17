@@ -1,72 +1,84 @@
-name: 'Terraform Azure Pipeline'   # Nom du workflow affiché dans GitHub Actions
+name: 'Terraform Azure Pipeline'
 
 on:
   push:
-    branches: ["main"]             # Déclenchement automatique lors d'un push sur la branche main
-  pull_request:                    # Déclenchement automatique lors d'une pull request
-  workflow_dispatch:               # Permet de lancer le workflow manuellement depuis GitHub
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+          - apply
+          - destroy
 
 jobs:
   terraform:
-    runs-on: ubuntu-latest         # Utilise un runner Ubuntu hébergé par GitHub
+    if: github.event.inputs.action == 'apply' || github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Récupère le code du dépôt GitHub
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2  # Installe la CLI Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.0
 
       - name: Generate SSH key
         run: |
-          ssh-keygen -t rsa -b 4096 -f id_rsa -N ""         # Génère une paire de clés SSH temporaire
-          echo "SSH_PUBLIC_KEY=$(cat id_rsa.pub)" >> $GITHUB_ENV   # Stocke la clé publique dans une variable d'environnement
-          SSH_PRIVATE_KEY=$(cat id_rsa | base64 | tr -d '\n')     # Encode la clé privée en base64 sur une seule ligne
-          echo "SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY" >> $GITHUB_ENV  # Stocke la clé privée encodée dans une variable d'environnement
+          mkdir -p ~/.ssh
+          ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+          echo "SSH_PUBLIC_KEY=$(cat ~/.ssh/id_rsa.pub)" >> $GITHUB_ENV
+          SSH_PRIVATE_KEY=$(base64 ~/.ssh/id_rsa | tr -d '\n')
+          echo "SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: terraform init
-        working-directory: pipeline         # Initialise Terraform dans le dossier pipeline
+        working-directory: pipeline
 
       - name: Terraform Format
         run: terraform fmt -check
-        working-directory: pipeline         # Vérifie le format des fichiers Terraform
+        working-directory: pipeline
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: pipeline         # Valide la syntaxe et la cohérence des fichiers Terraform
+        working-directory: pipeline
 
       - name: Terraform Plan
         run: terraform plan -var-file="terraform.tfvars"
         working-directory: pipeline
         env:
-          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   # Passe l'ID d'abonnement Azure depuis les secrets GitHub
-          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
-          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}       # Passe le client_secret Azure depuis les secrets GitHub
-          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
-          TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}               # Passe la clé publique SSH générée à Terraform
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}
 
       - name: Terraform Apply
+        if: github.event_name == 'push' || github.event.inputs.action == 'apply'
         run: terraform apply -auto-approve -input=false -var-file="terraform.tfvars"
         working-directory: pipeline
         env:
-          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   # Passe l'ID d'abonnement Azure depuis les secrets GitHub
-          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
-          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}       # Passe le client_secret Azure depuis les secrets GitHub
-          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
-          TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}               # Passe la clé publique SSH générée à Terraform
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}
 
       - name: Get VM Public IP
         run: |
-          VM_PUBLIC_IP=$(terraform -chdir=pipeline output -raw vm_public_ip | tr -d '\n')
+          VM_PUBLIC_IP=$(terraform -chdir=pipeline output -raw vm_public_ip -no-color | tr -d '\n')
           echo "VM_PUBLIC_IP=$VM_PUBLIC_IP" >> $GITHUB_ENV
 
       - name: Générer l'inventaire Ansible complet
         run: |
           echo "[web_server]" > inventory.ini
-          echo "vm ansible_host=$VM_PUBLIC_IP ansible_user=adminuser ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3" >> inventory.ini
-        env:
-          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}
+          echo "vm ansible_host=$VM_PUBLIC_IP ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3" >> inventory.ini
 
       - name: Afficher inventory.ini
         run: cat inventory.ini
@@ -80,12 +92,43 @@ jobs:
 
       - name: Run Ansible Playbook
         run: |
-          echo "${SSH_PRIVATE_KEY}" | base64 -d > id_rsa
-          chmod 600 id_rsa
-          ansible-playbook -i inventory.ini -u adminuser --private-key id_rsa AWS/terraform-aws-project/deploy_ansible_httpd_config/install_httpd_fedora.yml
+          echo "${SSH_PRIVATE_KEY}" | base64 -d > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ansible-playbook -i inventory.ini -u adminuser --private-key ~/.ssh/id_rsa serveur_web_linux/deploy_ansible_httpd_config/install_httpd_fedora.yml
         env:
           VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}
           SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}
 
-      - name: Debug Pipeline Directory
-        run: ls -la pipeline            # Affiche le contenu du dossier pipeline pour debug (optionnel)
+      - name: Nettoyage fichiers sensibles
+        if: always()
+        run: |
+          rm -f inventory.ini ansible.cfg
+          shred -u ~/.ssh/id_rsa ~/.ssh/id_rsa.pub
+
+
+  destroy:
+    if: github.event.inputs.action == 'destroy'
+    runs-on: ubuntu-latest
+    needs: []
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: pipeline
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -var-file="terraform.tfvars"
+        working-directory: pipeline
+        env:
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
