@@ -34,21 +34,17 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }} # Utilise le token Terraform Cloud stocké dans les secrets GitHub
-
-      - name: Generate terraform.tfvars
-        run: |
-          echo 'variable = "value"' > terraform.tfvars
-          echo 'resource_group_name = "rg-webserver"' > terraform.tfvars
-          echo 'location            = "France Central"' >> terraform.tfvars
-          echo 'vm_name             = "srv-web-linux"' >> terraform.tfvars
-          echo 'admin_username      = "adminuser"' >> terraform.tfvars
-          echo 'prefix              = "webvm"' >> terraform.tfvars
-          echo 'ssh_public_key      = "AAAAB3NzaC1yc2EAAAADAQABAAABAQC3v5Z"' >> terraform.tfvars
-          echo 'client_id           = "${{ secrets.AZURE_CLIENT_ID }}"' >> terraform.tfvars
-          echo 'client_secret       = "${{ secrets.AZURE_CLIENT_SECRET }}"' >> terraform.tfvars
-          echo 'tenant_id           = "${{ secrets.AZURE_TENANT_ID }}"' >> terraform.tfvars
-          echo 'subscription_id     = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"' >> terraform.tfvars
-        working-directory: .
+          cli_config_credentials_hostname: app.terraform.io         # Spécifie l'URL de Terraform Cloud
+          cli_config_credentials_app.terraform.io_token: ${{ secrets.TF_API_TOKEN }} # Utilise le token Terraform Cloud pour l'authentification
+          terraform_version: 1.5.0  # Spécifie la version de Terraform à installer (peut être modifié selon les besoins)
+          terraform_working_directory: .github/terraform  # Spécifie le répertoire de travail pour Terraform
+          terraform_azure_auth: true  # Active l'authentification Azure pour Terraform
+          terraform_azure_auth_client_id: ${{ secrets.AZURE_CLIENT_ID }}  # Utilise le client_id Azure stocké dans les secrets GitHub
+          terraform_azure_auth_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}  # Utilise le client_secret Azure stocké dans les secrets GitHub
+          terraform_azure_auth_tenant_id: ${{ secrets.AZURE_TENANT_ID }}  # Utilise le tenant_id Azure stocké dans les secrets GitHub
+          terraform_azure_auth_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}  # Utilise l'ID d'abonnement Azure stocké dans les secrets GitHub
+          terraform_azure_auth_environment: AzurePublicCloud  # Spécifie l'environnement Azure (peut être modifié selon les besoins)
+      
 
       - name: Terraform Init
         run: terraform init
@@ -76,7 +72,25 @@ jobs:
           TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}       # Passe le client_secret Azure depuis les secrets GitHub
           TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
 
-      
+      - name: Generate terraform.tfvars
+        run: |
+          echo 'resource_group_name = "rg-webserver"' > terraform.tfvars
+          echo 'location            = "France Central"' >> terraform.tfvars
+          echo 'vm_name             = "srv-web-linux"' >> terraform.tfvars
+          echo 'admin_username      = "adminuser"' >> terraform.tfvars
+          echo 'prefix              = "webvm"' >> terraform.tfvars
+          echo 'ssh_public_key      = "AAAAB3NzaC1yc2EAAAADAQABAAABAQC3v5Z"' >> terraform.tfvars
+          echo "client_id           = \"$AZURE_CLIENT_ID\"" >> terraform.tfvars
+          echo "client_secret       = \"$AZURE_CLIENT_SECRET\"" >> terraform.tfvars
+          echo "tenant_id           = \"$AZURE_TENANT_ID\"" >> terraform.tfvars
+          echo "subscription_id     = \"$AZURE_SUBSCRIPTION_ID\"" >> terraform.tfvars
+        working-directory: .github/terraform
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
           
     # Add any other variables (non-secret) directly, and use secrets for sensitive values
 
