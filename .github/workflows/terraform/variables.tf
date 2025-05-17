@@ -30,11 +30,11 @@ variable "prefix" {
 
 variable "client_secret" {
   description = "Secret du client Azure"
-  type        = string  
-  sensitive = true
+  type        = string
+  sensitive   = true
 }
 
 variable "subscription_id" { type = string }
-variable "client_id"       { type = string }
-variable "tenant_id"       { type = string }
+variable "client_id" { type = string }
+variable "tenant_id" { type = string }
 
