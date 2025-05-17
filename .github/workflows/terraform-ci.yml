@@ -61,7 +61,7 @@ jobs:
       - name: Get VM Public IP
         id: tfoutput
         run: |
-          echo "VM_PUBLIC_IP=$(terraform -chdir=pipeline output -raw vm_public_ip)" >> $GITHUB_ENV   # Récupère l'IP publique de la VM et la stocke dans une variable d'environnement
+          echo "VM_PUBLIC_IP=$(terraform -chdir=pipeline output -raw public_ip)" >> $GITHUB_ENV   # Récupère l'IP publique de la VM et la stocke dans une variable d'environnement
 
       # (Optionnel) Utilise la clé privée pour Ansible ou SSH
       - name: Run Ansible Playbook
