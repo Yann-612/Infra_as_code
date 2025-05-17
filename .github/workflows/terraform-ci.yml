@@ -17,9 +17,15 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2  # Installe la CLI Terraform
 
+      - name: Generate SSH key
+        run: |
+          ssh-keygen -t rsa -b 4096 -f id_rsa -N ""         # Génère une paire de clés SSH temporaire
+          echo "SSH_PUBLIC_KEY=$(cat id_rsa.pub)" >> $GITHUB_ENV   # Stocke la clé publique dans une variable d'environnement
+          echo "SSH_PRIVATE_KEY=$(base64 id_rsa)" >> $GITHUB_ENV   # Stocke la clé privée encodée en base64 dans une variable d'environnement
+
       - name: Terraform Init
         run: terraform init
-        working-directory: pipeline         # Dossier où se trouvent tes fichiers .tf
+        working-directory: pipeline         # Initialise Terraform dans le dossier pipeline
 
       - name: Terraform Format
         run: terraform fmt -check
@@ -37,16 +43,35 @@ jobs:
           TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
           TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}       # Passe le client_secret Azure depuis les secrets GitHub
           TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
+          TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}               # Passe la clé publique SSH générée à Terraform
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push' # Exécute seulement sur push main
         run: terraform apply -auto-approve -input=false -var-file="terraform.tfvars"
         working-directory: pipeline
         env:
-          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}
-          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   # Passe l'ID d'abonnement Azure depuis les secrets GitHub
+          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
+          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}       # Passe le client_secret Azure depuis les secrets GitHub
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
+          TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}               # Passe la clé publique SSH générée à Terraform
+
+      # (Optionnel) Récupère l'IP publique de la VM depuis les outputs Terraform
+      - name: Get VM Public IP
+        id: tfoutput
+        run: |
+          echo "VM_PUBLIC_IP=$(terraform -chdir=pipeline output -raw vm_public_ip)" >> $GITHUB_ENV   # Récupère l'IP publique de la VM et la stocke dans une variable d'environnement
+
+      # (Optionnel) Utilise la clé privée pour Ansible ou SSH
+      - name: Run Ansible Playbook
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'   # Exécute seulement sur push main
+        run: |
+          echo "${SSH_PRIVATE_KEY}" | base64 -d > id_rsa     # Décode la clé privée et la sauvegarde dans un fichier
+          chmod 600 id_rsa                                   # Restreint les permissions sur la clé privée
+          ansible-playbook -i "${VM_PUBLIC_IP}," -u adminuser --private-key id_rsa ansible/playbook.yml   # Lance le playbook Ansible sur la VM
+        env:
+          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}              # Passe l'IP publique de la VM à Ansible
+          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}        # Passe la clé privée SSH à Ansible
 
       - name: Debug Pipeline Directory
         run: ls -la pipeline            # Affiche le contenu du dossier pipeline pour debug (optionnel)
