@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Récupère le code du dépôt
+        uses: actions/checkout@v4  # Récupère le code du dépôt GitHub
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2  # Installe la CLI Terraform
@@ -21,8 +21,8 @@ jobs:
         run: |
           ssh-keygen -t rsa -b 4096 -f id_rsa -N ""         # Génère une paire de clés SSH temporaire
           echo "SSH_PUBLIC_KEY=$(cat id_rsa.pub)" >> $GITHUB_ENV   # Stocke la clé publique dans une variable d'environnement
-          SSH_PRIVATE_KEY=$(cat id_rsa | base64 | tr -d '\n')
-          echo "SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY" >> $GITHUB_ENV
+          SSH_PRIVATE_KEY=$(cat id_rsa | base64 | tr -d '\n')     # Encode la clé privée en base64 sur une seule ligne
+          echo "SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY" >> $GITHUB_ENV  # Stocke la clé privée encodée dans une variable d'environnement
 
       - name: Terraform Init
         run: terraform init
@@ -47,7 +47,6 @@ jobs:
           TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}               # Passe la clé publique SSH générée à Terraform
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' # Exécute seulement sur push main
         run: terraform apply -auto-approve -input=false -var-file="terraform.tfvars"
         working-directory: pipeline
         env:
@@ -57,23 +56,19 @@ jobs:
           TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
           TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}               # Passe la clé publique SSH générée à Terraform
 
-      # (Optionnel) Récupère l'IP publique de la VM depuis les outputs Terraform
       - name: Get VM Public IP
-        id: tfoutput
         run: |
-          VM_PUBLIC_IP=$(terraform -chdir=pipeline output -raw vm_public_ip | tr -d '\n')
+          VM_PUBLIC_IP=$(terraform -chdir=pipeline output -raw vm_public_ip | tr -d '\n')   # Récupère l'IP publique de la VM et la met dans une variable d'environnement
           echo "VM_PUBLIC_IP=$VM_PUBLIC_IP" >> $GITHUB_ENV
 
-      # (Optionnel) Utilise la clé privée pour Ansible ou SSH
       - name: Run Ansible Playbook
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'   # Exécute seulement sur push main
         run: |
-          echo "${SSH_PRIVATE_KEY}" | base64 -d > id_rsa     # Décode la clé privée et la sauvegarde dans un fichier
-          chmod 600 id_rsa                                   # Restreint les permissions sur la clé privée
+          echo "${SSH_PRIVATE_KEY}" | base64 -d > id_rsa      # Décode la clé privée et la sauvegarde dans un fichier temporaire
+          chmod 600 id_rsa                                    # Restreint les permissions sur la clé privée
           ansible-playbook -i "${VM_PUBLIC_IP}," -u adminuser --private-key id_rsa ansible/playbook.yml   # Lance le playbook Ansible sur la VM
         env:
-          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}              # Passe l'IP publique de la VM à Ansible
-          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}        # Passe la clé privée SSH à Ansible
+          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}               # Passe l'IP publique de la VM à Ansible
+          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}         # Passe la clé privée SSH à Ansible
 
       - name: Debug Pipeline Directory
         run: ls -la pipeline            # Affiche le contenu du dossier pipeline pour debug (optionnel)
