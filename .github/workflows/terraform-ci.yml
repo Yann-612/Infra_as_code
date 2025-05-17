@@ -75,10 +75,14 @@ jobs:
           VM_PUBLIC_IP=$(terraform -chdir=pipeline output -raw vm_public_ip -no-color | tr -d '\n')
           echo "VM_PUBLIC_IP=$VM_PUBLIC_IP" >> $GITHUB_ENV
 
+
       - name: Générer l'inventaire Ansible complet
         run: |
           echo "[web_server]" > inventory.ini
-          echo "vm ansible_host=$VM_PUBLIC_IP ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3" >> inventory.ini
+          echo "vm ansible_host=${VM_PUBLIC_IP} ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3" >> inventory.ini
+        env:
+          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}
+          
 
       - name: Afficher inventory.ini
         run: cat inventory.ini
@@ -94,7 +98,7 @@ jobs:
         run: |
           echo "${SSH_PRIVATE_KEY}" | base64 -d > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ansible-playbook -i inventory.ini -u adminuser --private-key ~/.ssh/id_rsa serveur_web_linux/deploy_ansible_httpd_config/install_httpd_fedora.yml
+          ansible-playbook -i inventory.ini -u adminuser --private-key ~/.ssh/id_rsa projet_etude/serveur_web_linux/deploy_ansible_httpd_config/install_httpd_fedora.yml
         env:
           VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}
           SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}
