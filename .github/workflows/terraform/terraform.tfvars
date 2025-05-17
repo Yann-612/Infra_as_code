@@ -1,3 +1,9 @@
+# --- Variables d'authentification Azure ---
+subscription_id = ""
+client_id       = ""
+client_secret   = ""
+tenant_id       = ""
+
 resource_group_name = "rg-webserver"
 location            = "France Central"
 vm_name             = "srv-web-linux"
