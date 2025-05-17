@@ -37,6 +37,8 @@ jobs:
 
       - name: Generate terraform.tfvars
         run: |
+          echo 'variable = "value"' > terraform.tfvars
+        working-directory: .
           echo 'resource_group_name = "rg-webserver"' > terraform.tfvars
           echo 'location            = "France Central"' >> terraform.tfvars
           echo 'vm_name             = "srv-web-linux"' >> terraform.tfvars
