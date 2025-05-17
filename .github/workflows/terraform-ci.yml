@@ -48,28 +48,28 @@ jobs:
           echo 'client_secret       = "${{ secrets.AZURE_CLIENT_SECRET }}"' >> terraform.tfvars
           echo 'tenant_id           = "${{ secrets.AZURE_TENANT_ID }}"' >> terraform.tfvars
           echo 'subscription_id     = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"' >> terraform.tfvars
-        working-directory: .
+        working-directory: .github/workflows
 
       - name: Terraform Init
         run: terraform init
-        working-directory: .   # Lance la commande dans le dossier contenant tes fichiers Terraform
+        working-directory: .github/workflows  # Lance la commande dans le dossier contenant tes fichiers Terraform
 
       - name: Terraform Format
         run: terraform fmt -check
-        working-directory: .   # Vérifie que les fichiers sont bien formatés (ne modifie rien, échoue si ce n'est pas le cas)
+        working-directory: .github/workflows   # Vérifie que les fichiers sont bien formatés (ne modifie rien, échoue si ce n'est pas le cas)
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: .  # Valide la syntaxe et la cohérence des fichiers Terraform
+        working-directory: .github/workflows  # Valide la syntaxe et la cohérence des fichiers Terraform
 
       - name: Terraform Plan
         run: terraform plan -var-file="terraform.tfvars"
-        working-directory: .   # Génère un plan d'exécution Terraform en utilisant le fichier de variables
+        working-directory: .github/workflows   # Génère un plan d'exécution Terraform en utilisant le fichier de variables
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push' # N'exécute cette étape que lors d'un push sur main
         run: terraform apply -auto-approve -input=false
-        working-directory: .
+        working-directory: .github/workflows
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   # Passe l'ID d'abonnement Azure depuis les secrets GitHub
           TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
@@ -81,4 +81,4 @@ jobs:
     # Add any other variables (non-secret) directly, and use secrets for sensitive values
 
       - name: Debug Terraform Directory
-        run: ls -la .github/workflows/terraform   # Affiche le contenu du dossier Terraform pour le debug (optionnel)
+        run: ls -la .github/workflows   # Affiche le contenu du dossier Terraform pour le debug (optionnel)
