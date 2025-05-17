@@ -66,6 +66,9 @@ jobs:
           echo "[web_server]" > inventory.ini
           echo "${VM_PUBLIC_IP}" >> inventory.ini
 
+      - name: Afficher inventory.ini
+        run: cat inventory.ini
+
       - name: Générer ansible.cfg
         run: |
           echo "[defaults]" > ansible.cfg
