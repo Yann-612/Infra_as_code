@@ -52,7 +52,7 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: .  # Lance la commande dans le dossier contenant tes fichiers Terraform
+        working-directory: .github/terraform  # Lance la commande dans le dossier contenant tes fichiers Terraform
 
       - name: Terraform Format
         run: terraform fmt -check
@@ -64,12 +64,12 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan -var-file="terraform.tfvars"
-        working-directory: .   # Génère un plan d'exécution Terraform en utilisant le fichier de variables
+        working-directory: .github/terraform   # Génère un plan d'exécution Terraform en utilisant le fichier de variables
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push' # N'exécute cette étape que lors d'un push sur main
         run: terraform apply -auto-approve -input=false
-        working-directory: .
+        working-directory: .github/terraform
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   # Passe l'ID d'abonnement Azure depuis les secrets GitHub
           TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
@@ -81,4 +81,4 @@ jobs:
     # Add any other variables (non-secret) directly, and use secrets for sensitive values
 
       - name: Debug Terraform Directory
-        run: ls -la .   # Affiche le contenu du dossier Terraform pour le debug (optionnel)
+        run: ls -la .github/terraform   # Affiche le contenu du dossier Terraform pour le debug (optionnel)
