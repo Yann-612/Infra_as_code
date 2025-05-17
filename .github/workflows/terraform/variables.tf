@@ -28,3 +28,9 @@ variable "prefix" {
   type        = string
 }
 
+variable "client_secret" {
+  description = "Secret du client Azure"
+  type        = string  
+  sensitive = true
+}
+
