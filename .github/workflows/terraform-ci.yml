@@ -63,12 +63,17 @@ jobs:
 
       - name: Generate terraform.tfvars
         run: |
-          echo 'access_key = "${{ secrets.AWS_ACCESS_KEY_ID }}"' > terraform.tfvars
-          echo 'secret_key = "${{ secrets.AWS_SECRET_ACCESS_KEY }}"' >> terraform.tfvars
-          echo 'region = "eu-west-3"' >> terraform.tfvars
-          echo 'instance_type = "t2.micro"' >> terraform.tfvars
-          echo 'ami = "ami-xxxxxxxx"' >> terraform.tfvars
-          echo 'key_name = "your-keypair"' >> terraform.tfvars
+          echo 'resource_group_name = "rg-webserver"' > terraform.tfvars
+          echo 'location            = "France Central"' >> terraform.tfvars
+          echo 'vm_name             = "srv-web-linux"' >> terraform.tfvars
+          echo 'admin_username      = "adminuser"' >> terraform.tfvars
+          echo 'prefix              = "webvm"' >> terraform.tfvars
+          echo 'ssh_public_key      = "AAAAB3NzaC1yc2EAAAADAQABAAABAQC3v5Z"' >> terraform.tfvars
+          echo 'client_id           = "${{ secrets.AZURE_CLIENT_ID }}"' >> terraform.tfvars
+          echo 'client_secret       = "${{ secrets.AZURE_CLIENT_SECRET }}"' >> terraform.tfvars
+          echo 'tenant_id           = "${{ secrets.AZURE_TENANT_ID }}"' >> terraform.tfvars
+          echo 'subscription_id     = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"' >> terraform.tfvars
+          
     # Add any other variables (non-secret) directly, and use secrets for sensitive values
 
       - name: Debug Terraform Directory
