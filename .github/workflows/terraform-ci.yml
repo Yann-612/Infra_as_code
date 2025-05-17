@@ -62,7 +62,11 @@ jobs:
           echo "VM_PUBLIC_IP=$VM_PUBLIC_IP" >> $GITHUB_ENV
 
       - name: Générer l'inventaire Ansible complet
-        run: echo -e "[web_server]\nvm ansible_host=${{ env.VM_PUBLIC_IP }} ansible_user=adminuser ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3" > inventory.ini
+        run: |
+          echo "[web_server]" > inventory.ini
+          echo "vm ansible_host=$VM_PUBLIC_IP ansible_user=adminuser ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3" >> inventory.ini
+        env:
+          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}
 
       - name: Afficher inventory.ini
         run: cat inventory.ini
