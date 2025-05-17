@@ -1,63 +1,52 @@
-# Ce workflow installe Terraform CLI, configure l'authentification avec Terraform Cloud,
-# et exécute les commandes Terraform sur GitHub Actions lors des push, pull request ou déclenchement manuel.
-
-name: 'Terraform'      # Nom du workflow affiché dans GitHub Actions
+name: 'Terraform Azure Pipeline'   # Nom du workflow affiché dans GitHub Actions
 
 on:
   push:
-    branches: ["main"]       # Déclenchement automatique lors d'un push sur la branche main
-  pull_request:              # Déclenchement automatique lors d'une pull request
-  workflow_dispatch:         # Permet de lancer le workflow manuellement depuis l'interface GitHub
-
-permissions:
-  contents: read             # Autorise la lecture du contenu du dépôt (niveau de permission minimal)
+    branches: ["main"]             # Déclenchement automatique lors d'un push sur la branche main
+  pull_request:                    # Déclenchement automatique lors d'une pull request
+  workflow_dispatch:               # Permet de lancer le workflow manuellement depuis GitHub
 
 jobs:
   terraform:
-    name: 'Terraform'        # Nom du job affiché dans GitHub Actions
-    runs-on: ubuntu-latest   # Utilise un runner GitHub hébergé sous Ubuntu
-    environment: dev         # Définit l'environnement cible (optionnel, utile pour les protections d'environnement)
-
-    defaults:
-      run:
-        shell: bash          # Utilise bash comme shell par défaut pour toutes les étapes
+    runs-on: ubuntu-latest         # Utilise un runner Ubuntu hébergé par GitHub
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0     # Récupère tout l'historique Git (utile pour certains plugins ou actions)
+      - name: Checkout code
+        uses: actions/checkout@v4  # Récupère le code du dépôt
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }} # Utilise le token Terraform Cloud stocké dans les secrets GitHub
+        uses: hashicorp/setup-terraform@v2  # Installe la CLI Terraform
 
       - name: Terraform Init
         run: terraform init
-        working-directory: .github/workflows/terraform   # Lance la commande dans le dossier contenant tes fichiers Terraform
+        working-directory: pipeline         # Dossier où se trouvent tes fichiers .tf
 
       - name: Terraform Format
         run: terraform fmt -check
-        working-directory: .github/workflows/terraform   # Vérifie que les fichiers sont bien formatés (ne modifie rien, échoue si ce n'est pas le cas)
+        working-directory: pipeline         # Vérifie le format des fichiers Terraform
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: .github/workflows/terraform   # Valide la syntaxe et la cohérence des fichiers Terraform
+        working-directory: pipeline         # Valide la syntaxe et la cohérence des fichiers Terraform
 
       - name: Terraform Plan
         run: terraform plan -var-file="terraform.tfvars"
-        working-directory: .github/workflows/terraform   # Génère un plan d'exécution Terraform en utilisant le fichier de variables
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' # N'exécute cette étape que lors d'un push sur main
-        run: terraform apply -auto-approve -input=false
-        working-directory: .github/workflows/terraform
+        working-directory: pipeline
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   # Passe l'ID d'abonnement Azure depuis les secrets GitHub
           TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
           TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}       # Passe le client_secret Azure depuis les secrets GitHub
           TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
 
-      - name: Debug Terraform Directory
-        run: ls -la .github/workflows/terraform   # Affiche le contenu du dossier Terraform pour le debug (optionnel)
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' # Exécute seulement sur push main
+        run: terraform apply -auto-approve -input=false -var-file="terraform.tfvars"
+        working-directory: pipeline
+        env:
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Debug Pipeline Directory
+        run: ls -la pipeline            # Affiche le contenu du dossier pipeline pour debug (optionnel)

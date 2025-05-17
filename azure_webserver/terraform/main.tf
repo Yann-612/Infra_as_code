@@ -25,7 +25,7 @@ resource "azurerm_subnet" "subnet" {
 }
 
 ## Network Security Group
-resource "azurerm_network_security_group" "security_group" {
+resource "azurerm_network_security_group" "nsg" {
   name                = var.security_group_name
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -75,8 +75,8 @@ resource "azurerm_network_security_group" "security_group" {
 }
 
 ## Network Watcher
-resource "azurerm_network_watcher" "net-watcher" {
-  name                = "net-watcher"
+resource "azurerm_network_watcher" "network_watcher" {
+  name                = "network-watcher"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -109,8 +109,8 @@ resource "azurerm_linux_virtual_machine" "vm" {
   admin_ssh_key {
     username   = var.admin_username
     #public_key = file("C:\Users\yann_/.ssh/id_ed25519.pub")
-    #public_key = file("C:\Users\Yannick/.ssh/id_ed25519.pub")
-    public_key = file(var.ssh_public_key)
+    public_key = file("C:/Users/Yannick/.ssh/id_ed25519.pub")
+    #public_key = file(var.ssh_public_key)
   }
 }
 
@@ -124,12 +124,12 @@ resource "azurerm_network_interface" "nic" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.public.id
+    public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
 }
 
 ## Public IP
-resource "azurerm_public_ip" "public" {
+resource "azurerm_public_ip" "public_ip" {
   name                = "public-ip"
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -140,7 +140,9 @@ resource "azurerm_public_ip" "public" {
 }
 
 ## Network Interface Security Group Association
-resource "azurerm_network_interface_security_group_association" "nic_sec_group" {
+resource "azurerm_network_interface_security_group_association" "nic_sec_group" { 
   network_interface_id      = azurerm_network_interface.nic.id
-  network_security_group_id = azurerm_network_security_group.security_group.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+  depends_on = [azurerm_network_interface.nic, azurerm_network_security_group.nsg]
 }
+

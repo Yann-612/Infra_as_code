@@ -1,3 +1,11 @@
+variable "subscription_id" { type = string }
+variable "client_id"       { type = string }
+variable "client_secret" {
+  type      = string
+  sensitive = true
+}
+variable "tenant_id" { type = string }
+
 variable "resource_group_name" {
   type        = string
   description = "Nom du Resource Group"
@@ -27,14 +35,4 @@ variable "prefix" {
   description = "Préfixe utilisé pour nommer les ressources"
   type        = string
 }
-
-variable "client_secret" {
-  description = "Secret du client Azure"
-  type        = string
-  sensitive   = true
-}
-
-variable "subscription_id" { type = string }
-variable "client_id" { type = string }
-variable "tenant_id" { type = string }
 
