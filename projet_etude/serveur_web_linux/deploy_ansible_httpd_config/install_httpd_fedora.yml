@@ -22,7 +22,7 @@
     - name: Mettre à jour le paquets (Ubuntu)
       apt:
         update_cache: yes
-      when: ansible_os_family == "Debian"
+      when: ansible_os_family == "Ubuntu"
 
 
     - name: Installer Apache sur Ubuntu
@@ -31,14 +31,14 @@
           - apache2
           - libapache2-mod-php  
         state: present
-      when: ansible_os_family == "Debian"
+      when: ansible_os_family == "Ubuntu"
 
     - name: Démarrer et activer Apache (Ubuntu)
       service:
         name: apache2 
         state: started
         enabled: yes
-      when: ansible_os_family == "Debian"
+      when: ansible_os_family == "Ubuntu"
   
 
     - name: Vérifier et créer /var/www/html si absent (Ubuntu)
@@ -48,13 +48,13 @@
         owner: www-data
         group: www-data
         mode: '0755'
-      when: ansible_os_family == "Debian"
+      when: ansible_os_family == "Ubuntu"
 
 
     - name: copy html file for site
       tags: apache,web,ubuntu
       ansible.builtin.copy:
-        src:  default_site.html
+        src:  default_site_2.html
         dest: /var/www/html/index.html
         owner:  root
         group:  root
