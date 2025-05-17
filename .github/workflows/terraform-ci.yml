@@ -21,7 +21,7 @@ jobs:
         run: |
           ssh-keygen -t rsa -b 4096 -f id_rsa -N ""         # Génère une paire de clés SSH temporaire
           echo "SSH_PUBLIC_KEY=$(cat id_rsa.pub)" >> $GITHUB_ENV   # Stocke la clé publique dans une variable d'environnement
-          echo "SSH_PRIVATE_KEY=$(base64 id_rsa)" >> $GITHUB_ENV   # Stocke la clé privée encodée en base64 dans une variable d'environnement
+          echo "SSH_PRIVATE_KEY=$(base64 -w 0 id_rsa)" >> $GITHUB_ENV   # Stocke la clé privée encodée en base64 dans une variable d'environnement
 
       - name: Terraform Init
         run: terraform init
