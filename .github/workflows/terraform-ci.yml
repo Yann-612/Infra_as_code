@@ -64,7 +64,7 @@ jobs:
       - name: Générer l'inventaire Ansible complet
         run: |
           echo "[web_server]" > inventory.ini
-          echo "vm ansible_host=${VM_PUBLIC_IP} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/ubuntu_rsa ansible_python_interpreter=/usr/bin/python3" >> inventory.ini
+          echo "vm ansible_host=${{ env.VM_PUBLIC_IP }} ansible_user=ubuntu ansible_ssh_private_key_file=./id_rsa ansible_python_interpreter=/usr/bin/python3" >> inventory.ini
 
       - name: Afficher inventory.ini
         run: cat inventory.ini
