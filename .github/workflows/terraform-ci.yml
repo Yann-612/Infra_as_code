@@ -48,7 +48,7 @@ jobs:
           echo 'client_secret       = "${{ secrets.AZURE_CLIENT_SECRET }}"' >> terraform.tfvars
           echo 'tenant_id           = "${{ secrets.AZURE_TENANT_ID }}"' >> terraform.tfvars
           echo 'subscription_id     = "${{ secrets.AZURE_SUBSCRIPTION_ID }}"' >> terraform.tfvars
-        working-directory: .github/workflows
+        working-directory: .
 
       - name: Terraform Init
         run: terraform init
