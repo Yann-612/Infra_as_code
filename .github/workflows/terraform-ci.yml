@@ -61,7 +61,7 @@ jobs:
         run: |
           IP=$(terraform -chdir=pipeline output -raw vm_public_ip | tr -d '\n')
           echo "VM_PUBLIC_IP=$IP" >> $GITHUB_ENV
-          echo "::set-output name=ip::$IP"
+            echo "VM_PUBLIC_IP=${{ env.VM_PUBLIC_IP }}"
 
       - name: Générer l'inventaire Ansible complet
         run: |
