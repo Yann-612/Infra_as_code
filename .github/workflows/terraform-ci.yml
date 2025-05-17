@@ -61,14 +61,19 @@ jobs:
           VM_PUBLIC_IP=$(terraform -chdir=pipeline output -raw vm_public_ip | tr -d '\n')   # Récupère l'IP publique de la VM et la met dans une variable d'environnement
           echo "VM_PUBLIC_IP=$VM_PUBLIC_IP" >> $GITHUB_ENV
 
+      - name: Générer l'inventaire Ansible
+        run: |
+          echo "[web_server]" > inventory.ini
+          echo "${VM_PUBLIC_IP}" >> inventory.ini
+
       - name: Run Ansible Playbook
         run: |
-          echo "${SSH_PRIVATE_KEY}" | base64 -d > id_rsa      # Décode la clé privée et la sauvegarde dans un fichier temporaire
-          chmod 600 id_rsa                                    # Restreint les permissions sur la clé privée
-          ansible-playbook -i "${VM_PUBLIC_IP}," -u adminuser --private-key id_rsa ansible/playbook.yml   # Lance le playbook Ansible sur la VM
+          echo "${SSH_PRIVATE_KEY}" | base64 -d > id_rsa
+          chmod 600 id_rsa
+          ansible-playbook -i inventory.ini -u adminuser --private-key id_rsa AWS/terraform-aws-project/deploy_ansible_httpd_config/install_httpd_fedora.yml
         env:
-          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}               # Passe l'IP publique de la VM à Ansible
-          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}         # Passe la clé privée SSH à Ansible
+          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}
+          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}
 
       - name: Debug Pipeline Directory
         run: ls -la pipeline            # Affiche le contenu du dossier pipeline pour debug (optionnel)
