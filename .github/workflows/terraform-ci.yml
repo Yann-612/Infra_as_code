@@ -64,7 +64,7 @@ jobs:
 
       - name: Générer l'inventaire Ansible complet
         run: |
-          echo "[web_server]" > inventory.ini                                     # Crée un groupe d'hôtes Ansible
+          echo "[web_servers]" > inventory.ini                                     # Crée un groupe d'hôtes Ansible
           echo "vm ansible_host=${VM_PUBLIC_IP} ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3" >> inventory.ini
         env:
           VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}                                   # Passe l'IP publique à l'étape
@@ -83,7 +83,7 @@ jobs:
         run: |
           echo "${SSH_PRIVATE_KEY}" | base64 -d > id_rsa                          # Décode la clé privée et la sauvegarde dans un fichier
           chmod 600 id_rsa                                                        # Restreint les permissions sur la clé privée
-          ansible-playbook -i inventory.ini -u adminuser --private-key id_rsa projet_etude\serveur_web_linux\deploy_ansible_httpd_config\install_httpd_fedora.yml
+          ansible-playbook -i inventory.ini -u adminuser --private-key ~/.ssh/id_rsa projet_etude\serveur_web_linux\deploy_ansible_httpd_config\install_httpd_fedora.yml
         env:
           VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}                                   # Passe l'IP publique à l'étape
           SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}                             # Passe la clé privée à l'étape
