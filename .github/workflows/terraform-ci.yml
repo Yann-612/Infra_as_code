@@ -67,7 +67,7 @@ jobs:
 [web_servers]
 vm ansible_host=$IP ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3.10
 EOF
-          cat inventory.ini                                                     # Affiche le contenu de l'inventaire pour debug
+        cat inventory.ini                                                     # Affiche le contenu de l'inventaire pour debug
 
       - name: Créer la clé privée SSH
         run: |
@@ -75,6 +75,35 @@ EOF
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa      # Décode la clé privée SSH depuis les secrets GitHub
           chmod 700 ~/.ssh                                                        # Définit les permissions du répertoire ~/.ssh
           chmod 600 ~/.ssh/id_rsa                                                 # Restreint les permissions sur la clé privée
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}                        # Passe la clé privée SSH depuis les secrets GitHub
+      - name: Ajouter la clé SSH à l'agent
+        run: |
+          eval "$(ssh-agent -s)"                                                  # Démarre l'agent SSH
+          ssh-add ~/.ssh/id_rsa                                                   # Ajoute la clé privée à l'agent SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}                        # Passe la clé privée SSH depuis les secrets GitHub
+      - name: Vérifier la connexion SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa adminuser@${{ env.VM_PUBLIC_IP }} "echo 'Connexion SSH réussie'"  # Vérifie la connexion SSH à la VM
+        env:
+          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}                                 # Passe l'IP publique à l'étape
+          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}                           # Passe la clé privée à l'étape
+      - name: Installer les dépendances
+        run: |
+          sudo apt update                                                       # Met à jour la liste des paquets
+          sudo apt install -y python3-pip python3-venv                          # Installe pip et venv pour Python 3
+          pip3 install --upgrade pip                                            # Met à jour pip
+          pip3 install ansible-lint                                             # Installe ansible-lint pour vérifier les playbooks Ansible
+          pip3 install ansible                                                  # Installe Ansible
+          pip3 install --upgrade setuptools                                      # Met à jour setuptools
+          pip3 install --upgrade wheel                                          # Met à jour wheel
+          pip3 install --upgrade cryptography                                    # Met à jour cryptography
+          pip3 install --upgrade paramiko                                        # Met à jour paramiko
+          pip3 install --upgrade ansible[ssh]                                   # Installe les dépendances SSH pour Ansible
+          pip3 install --upgrade ansible[azure]                                 # Installe les dépendances Azure pour Ansible
+          pip3 install --upgrade ansible[azure_rm]                              # Installe les dépendances Azure RM pour Ansible
+          pip3 install --upgrade ansible[azure_rm,ssh]                          # Installe les dépendances Azure RM et SSH pour Ansible
 
       - name: Générer ansible.cfg
         run: |
