@@ -56,21 +56,23 @@ jobs:
           TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
           TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}               # Passe la clé publique SSH générée à Terraform
 
-      - name: Get VM Public IP
-        id: get_ip
+      - name: Récupérer l'IP publique de la VM
         run: |
-          VM_PUBLIC_IP=$(terraform -chdir=pipeline output -raw vm_public_ip | tr -d '\n')   # Récupère l'IP publique de la VM provisionnée
-          echo "VM_PUBLIC_IP=$VM_PUBLIC_IP" >> $GITHUB_ENV                                  # Stocke l'IP dans une variable d'environnement
+          IP=$(terraform output -raw vm_public_ip)   # Récupère l'IP publique de la VM provisionnée
+          if [ -z "$IP" ]; then
+            echo "Erreur : L'IP publique de la VM est vide." >&2
+            exit 1
+          fi
+          cat > inventory.ini <<EOF
+          [web_servers]
+          vm ansible_host=$IP ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3.10
+          EOF                              
+              cat inventory.ini                                                    
 
-      - name: Générer l'inventaire Ansible complet
+      - name: Créer la clé privée SSH
         run: |
-          echo "[web_servers]" > inventory.ini                                     # Crée un groupe d'hôtes Ansible
-          echo "vm ansible_host=${{ env.VM_PUBLIC_IP }} ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3" >> inventory.ini
-        env:
-          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}                                   # Passe l'IP publique à l'étape
-
-      - name: Afficher inventory.ini
-        run: cat inventory.ini                                                    # Affiche le contenu de l'inventaire pour debug
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
       - name: Générer ansible.cfg
         run: |
@@ -79,8 +81,14 @@ jobs:
           echo "host_key_checking = False" >> ansible.cfg                         # Désactive la vérification des clés SSH
           echo "retry_files_enabled = False" >> ansible.cfg                       # Désactive les fichiers de retry
 
+      - name: Installer Ansible
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
       - name: Run Ansible Playbook
         run: |
+          ansible-playbook -i inventory.ini -u adminuser --private-key ~/.ssh/id_rsa projet_etude/serveur_web_linux/deploy_ansible_httpd_config/install_httpd_fedora.yml
           echo "${SSH_PRIVATE_KEY}" | base64 -d > id_rsa                          # Décode la clé privée et la sauvegarde dans un fichier
           chmod 600 id_rsa                                                        # Restreint les permissions sur la clé privée
           ansible-playbook -i inventory.ini -u adminuser --private-key ~/.ssh/id_rsa projet_etude/serveur_web_linux/deploy_ansible_httpd_config/install_httpd_fedora.yml
