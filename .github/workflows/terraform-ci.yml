@@ -1,128 +1,118 @@
-name: 'Terraform Azure Pipeline'  # Nom du workflow GitHub Actions
+name: 'Terraform Azure Pipeline'
 
 on:
   push:
-    branches: ["main"]            # Déclenchement automatique lors d'un push sur la branche "main"
-  pull_request:                   # Déclenchement automatique lors d'une pull request
-  workflow_dispatch:              # Permet de lancer manuellement le workflow depuis l'interface GitHub
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   terraform:
-    runs-on: ubuntu-latest        # Utilise un runner Ubuntu hébergé par GitHub
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Récupère le code source du dépôt GitHub
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2  # Installe la CLI Terraform sur le runner
+        uses: hashicorp/setup-terraform@v2
 
       - name: Generate SSH key
         run: |
-          ssh-keygen -t rsa -b 4096 -f id_rsa -N ""         # Génère une paire de clés SSH temporaire
-          echo "SSH_PUBLIC_KEY=$(cat id_rsa.pub)" >> $GITHUB_ENV   # Stocke la clé publique dans une variable d'environnement
-          SSH_PRIVATE_KEY=$(cat id_rsa | base64 | tr -d '\n')     # Encode la clé privée en base64
-          echo "SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY" >> $GITHUB_ENV  # Stocke la clé privée encodée dans une variable d'environnement
+          ssh-keygen -t rsa -b 4096 -f id_rsa -N ""
+          echo "SSH_PUBLIC_KEY=$(cat id_rsa.pub)" >> $GITHUB_ENV
+          SSH_PRIVATE_KEY=$(cat id_rsa | base64 | tr -d '\n')
+          echo "SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: terraform init
-        working-directory: pipeline         # Initialise Terraform dans le dossier "pipeline"
+        working-directory: pipeline
 
       - name: Terraform Format
         run: terraform fmt -check
-        working-directory: pipeline         # Vérifie le format des fichiers Terraform
+        working-directory: pipeline
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: pipeline         # Valide la syntaxe et la cohérence des fichiers Terraform
+        working-directory: pipeline
 
       - name: Terraform Plan
         run: terraform plan -var-file="terraform.tfvars"
-        working-directory: pipeline         # Génère un plan Terraform en utilisant le fichier "terraform.tfvars"
+        working-directory: pipeline
         env:
-          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   # Passe l'ID d'abonnement Azure depuis les secrets GitHub
-          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
-          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}       # Passe le client_secret Azure depuis les secrets GitHub
-          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
-          TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}               # Passe la clé publique SSH générée à Terraform
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false -var-file="terraform.tfvars"
-        working-directory: pipeline         # Applique le plan Terraform pour provisionner les ressources
+        working-directory: pipeline
         env:
-          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   # Passe l'ID d'abonnement Azure depuis les secrets GitHub
-          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}               # Passe le client_id Azure depuis les secrets GitHub
-          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}       # Passe le client_secret Azure depuis les secrets GitHub
-          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}               # Passe le tenant_id Azure depuis les secrets GitHub
-          TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}               # Passe la clé publique SSH générée à Terraform
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          TF_VAR_client_secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_ssh_public_key: ${{ env.SSH_PUBLIC_KEY }}
 
       - name: Récupérer l'IP publique de la VM
         run: |
-          IP=$(terraform output -raw vm_public_ip)   # Récupère l'IP publique de la VM provisionnée
-          if [ -z "$IP" ]; then
-            echo "Erreur : L'IP publique de la VM est vide." >&2
-            exit 1
-          fi
+          IP=$(terraform output -raw vm_public_ip)
+          echo "VM_PUBLIC_IP=$IP" >> $GITHUB_ENV
           cat > inventory.ini <<EOF
 [web_servers]
 vm ansible_host=$IP ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3.10
+
+[web_servers:vars]
+ansible_host=$IP
+ansible_user=adminuser
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+ansible_python_interpreter=/usr/bin/python3.10
+ansible_port=22
+ansible_connection=ssh
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
 EOF
-        cat inventory.ini                                                     # Affiche le contenu de l'inventaire pour debug
+          cat inventory.ini
 
       - name: Créer la clé privée SSH
         run: |
-          mkdir -p ~/.ssh                                                         # Crée le répertoire ~/.ssh s'il n'existe pas
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa      # Décode la clé privée SSH depuis les secrets GitHub
-          chmod 700 ~/.ssh                                                        # Définit les permissions du répertoire ~/.ssh
-          chmod 600 ~/.ssh/id_rsa                                                 # Restreint les permissions sur la clé privée
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}                        # Passe la clé privée SSH depuis les secrets GitHub
+          mkdir -p ~/.ssh
+          echo "${{ env.SSH_PRIVATE_KEY }}" | base64 --decode > ~/.ssh/id_rsa
+          chmod 700 ~/.ssh
+          chmod 600 ~/.ssh/id_rsa
+
       - name: Ajouter la clé SSH à l'agent
         run: |
-          eval "$(ssh-agent -s)"                                                  # Démarre l'agent SSH
-          ssh-add ~/.ssh/id_rsa                                                   # Ajoute la clé privée à l'agent SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}                        # Passe la clé privée SSH depuis les secrets GitHub
-      - name: Vérifier la connexion SSH
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
+
+      - name: Vérifier la connexion SSH 
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa adminuser@${{ env.VM_PUBLIC_IP }} "echo 'Connexion SSH réussie'"  # Vérifie la connexion SSH à la VM
-        env:
-          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}                                 # Passe l'IP publique à l'étape
-          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}                           # Passe la clé privée à l'étape
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa adminuser@${{ env.VM_PUBLIC_IP }} "echo 'Connexion SSH réussie'"
+
       - name: Installer les dépendances
         run: |
-          sudo apt update                                                       # Met à jour la liste des paquets
-          sudo apt install -y python3-pip python3-venv                          # Installe pip et venv pour Python 3
-          pip3 install --upgrade pip                                            # Met à jour pip
-          pip3 install ansible-lint                                             # Installe ansible-lint pour vérifier les playbooks Ansible
-          pip3 install ansible                                                  # Installe Ansible
-          pip3 install --upgrade setuptools                                      # Met à jour setuptools
-          pip3 install --upgrade wheel                                          # Met à jour wheel
-          pip3 install --upgrade cryptography                                    # Met à jour cryptography
-          pip3 install --upgrade paramiko                                        # Met à jour paramiko
-          pip3 install --upgrade ansible[ssh]                                   # Installe les dépendances SSH pour Ansible
-          pip3 install --upgrade ansible[azure]                                 # Installe les dépendances Azure pour Ansible
-          pip3 install --upgrade ansible[azure_rm]                              # Installe les dépendances Azure RM pour Ansible
-          pip3 install --upgrade ansible[azure_rm,ssh]                          # Installe les dépendances Azure RM et SSH pour Ansible
+          sudo apt update
+          sudo apt install -y python3-pip python3-venv
+          pip3 install --upgrade pip setuptools wheel cryptography paramiko
+          pip3 install ansible-lint ansible[azure,ssh]
 
       - name: Générer ansible.cfg
         run: |
-          echo "[defaults]" > ansible.cfg                                       # Crée un fichier de configuration Ansible
-          echo "inventory = inventory.ini" >> ansible.cfg                       # Définit l'inventaire par défaut
-          echo "host_key_checking = False" >> ansible.cfg                       # Désactive la vérification des clés SSH
-          echo "retry_files_enabled = False" >> ansible.cfg                     # Désactive les fichiers de retry
+          echo "[defaults]" > ansible.cfg
+          echo "inventory = inventory.ini" >> ansible.cfg
+          echo "host_key_checking = False" >> ansible.cfg
+          echo "retry_files_enabled = False" >> ansible.cfg
 
       - name: Installer Ansible
         run: |
-          sudo apt update                                                       # Met à jour la liste des paquets
-          sudo apt install -y ansible                                           # Installe Ansible sur le runner
+          sudo apt update
+          sudo apt install -y ansible
 
       - name: Run Ansible Playbook
         run: |
           ansible-playbook -i inventory.ini -u adminuser --private-key ~/.ssh/id_rsa projet_etude/serveur_web_linux/deploy_ansible_httpd_config/install_httpd_fedora.yml
-        env:
-          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}                                 # Passe l'IP publique à l'étape
-          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}                           # Passe la clé privée à l'étape
 
       - name: Debug Pipeline Directory
-        run: ls -la pipeline                                                    # Affiche le contenu du dossier "pipeline" pour debug
+        run: ls -la pipeline
