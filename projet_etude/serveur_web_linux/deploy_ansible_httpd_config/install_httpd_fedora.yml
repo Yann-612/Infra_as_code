@@ -1,6 +1,6 @@
 ---
 - name: Installer un serveur web sur Ubuntu
-  hosts: all
+  hosts: web_servers
   become: true
   vars:
     ansible_python_interpreter: /usr/bin/python3.10
@@ -15,14 +15,11 @@
         msg: "Version de Python : {{ python_version.stdout }}"
   
       
-      
-      
-          ####  Serveur Ubuntu #### 
 
-    - name: Mettre à jour le paquets (Ubuntu)
+    - name: Mettre à jour le paquets (Debian/Ubuntu)
       apt:
         update_cache: yes
-      when: ansible_os_family == "Ubuntu"
+      when: ansible_os_family == "Debian"
 
 
     - name: Installer Apache sur Ubuntu
@@ -31,14 +28,14 @@
           - apache2
           - libapache2-mod-php  
         state: present
-      when: ansible_os_family == "Ubuntu"
+      when: ansible_os_family == "Debian"
 
-    - name: Démarrer et activer Apache (Ubuntu)
+    - name: Démarrer et activer Apache (Debian/Ubuntu)
       service:
         name: apache2 
         state: started
         enabled: yes
-      when: ansible_os_family == "Ubuntu"
+      when: ansible_os_family == "Debian"
   
 
     - name: Vérifier et créer /var/www/html si absent (Ubuntu)
@@ -48,11 +45,10 @@
         owner: www-data
         group: www-data
         mode: '0755'
-      when: ansible_os_family == "Ubuntu"
+      when: ansible_os_family == "Debian"
 
 
     - name: copy html file for site
-      tags: apache,web,ubuntu
       ansible.builtin.copy:
         src:  default_site_2.html
         dest: /var/www/html/index.html
