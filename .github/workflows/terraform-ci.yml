@@ -67,34 +67,33 @@ jobs:
           [web_servers]
           vm ansible_host=$IP ansible_user=adminuser ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3.10
           EOF                              
-              cat inventory.ini                                                    
+          cat inventory.ini                                                     # Affiche le contenu de l'inventaire pour debug
 
       - name: Créer la clé privée SSH
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          mkdir -p ~/.ssh                                                         # Crée le répertoire ~/.ssh s'il n'existe pas
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa      # Décode la clé privée SSH depuis les secrets GitHub
+          chmod 700 ~/.ssh                                                        # Définit les permissions du répertoire ~/.ssh
+          chmod 600 ~/.ssh/id_rsa                                                 # Restreint les permissions sur la clé privée
 
       - name: Générer ansible.cfg
         run: |
-          echo "[defaults]" > ansible.cfg                                         # Crée un fichier de configuration Ansible
-          echo "inventory = inventory.ini" >> ansible.cfg                         # Définit l'inventaire par défaut
-          echo "host_key_checking = False" >> ansible.cfg                         # Désactive la vérification des clés SSH
-          echo "retry_files_enabled = False" >> ansible.cfg                       # Désactive les fichiers de retry
+          echo "[defaults]" > ansible.cfg                                       # Crée un fichier de configuration Ansible
+          echo "inventory = inventory.ini" >> ansible.cfg                       # Définit l'inventaire par défaut
+          echo "host_key_checking = False" >> ansible.cfg                       # Désactive la vérification des clés SSH
+          echo "retry_files_enabled = False" >> ansible.cfg                     # Désactive les fichiers de retry
 
       - name: Installer Ansible
         run: |
-          sudo apt update
-          sudo apt install -y ansible
+          sudo apt update                                                       # Met à jour la liste des paquets
+          sudo apt install -y ansible                                           # Installe Ansible sur le runner
 
       - name: Run Ansible Playbook
         run: |
           ansible-playbook -i inventory.ini -u adminuser --private-key ~/.ssh/id_rsa projet_etude/serveur_web_linux/deploy_ansible_httpd_config/install_httpd_fedora.yml
-          echo "${SSH_PRIVATE_KEY}" | base64 -d > id_rsa                          # Décode la clé privée et la sauvegarde dans un fichier
-          chmod 600 id_rsa                                                        # Restreint les permissions sur la clé privée
-          ansible-playbook -i inventory.ini -u adminuser --private-key ~/.ssh/id_rsa projet_etude/serveur_web_linux/deploy_ansible_httpd_config/install_httpd_fedora.yml
         env:
-          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}                                   # Passe l'IP publique à l'étape
-          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}                             # Passe la clé privée à l'étape
+          VM_PUBLIC_IP: ${{ env.VM_PUBLIC_IP }}                                 # Passe l'IP publique à l'étape
+          SSH_PRIVATE_KEY: ${{ env.SSH_PRIVATE_KEY }}                           # Passe la clé privée à l'étape
 
       - name: Debug Pipeline Directory
-        run: ls -la pipeline                                                      # Affiche le contenu du dossier "pipeline" pour debug
+        run: ls -la pipeline                                                    # Affiche le contenu du dossier "pipeline" pour debug
